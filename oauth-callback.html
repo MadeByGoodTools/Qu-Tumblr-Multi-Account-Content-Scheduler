@@ -81,30 +81,24 @@
   <body>
     <main>
       <div class="mark" aria-hidden="true">Q</div>
-      <h1>Authorization complete</h1>
-      <p>Copy the complete callback address below, return to Qu, and paste it into the authorization window.</p>
-      <div id="callback" class="callback" aria-label="Complete callback address"></div>
-      <button id="copy" type="button">Copy callback address</button>
-      <p id="status" role="status" aria-live="polite"></p>
+      <h1>Connecting to Qu…</h1>
+      <p id="message">Finishing Tumblr authorization. This should only take a moment.</p>
     </main>
 
     <script>
-      const callbackUrl = window.location.href;
-      const callback = document.getElementById("callback");
-      const copyButton = document.getElementById("copy");
-      const status = document.getElementById("status");
-
-      callback.textContent = callbackUrl;
-
-      copyButton.addEventListener("click", async () => {
-        try {
-          await navigator.clipboard.writeText(callbackUrl);
-          status.textContent = "Copied. You can return to Qu now.";
-          copyButton.textContent = "Copied";
-        } catch {
-          status.textContent = "Select the address above and copy it manually.";
-        }
-      });
+      const source = new URLSearchParams(window.location.search);
+      const destination = new URL("https://qu-tumblr-auth.nullgurl.workers.dev/v1/oauth/callback");
+      for (const name of ["code", "state", "error", "error_description"]) {
+        const value = source.get(name);
+        if (value) destination.searchParams.set(name, value);
+      }
+      if (!destination.searchParams.has("error") &&
+          (!destination.searchParams.has("code") || !destination.searchParams.has("state"))) {
+        document.getElementById("message").textContent =
+          "Tumblr did not return a complete authorization response. Return to Qu and try again.";
+      } else {
+        window.location.replace(destination.toString());
+      }
     </script>
   </body>
 </html>
