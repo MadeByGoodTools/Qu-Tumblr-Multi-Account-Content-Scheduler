@@ -2,7 +2,7 @@
 
 Qu is a visual desktop publishing workspace for preparing, organizing, and posting multiple Tumblr posts efficiently.
 
-[Download Qu 0.8.1](https://github.com/NullGurll/qu/releases/tag/v0.8.1)
+[Download Qu 0.8.2](https://github.com/NullGurll/qu/releases/tag/v0.8.2)
 
 ![Qu visual posting workspace](docs/images/qu-workspace.png)
 
@@ -16,6 +16,7 @@ Qu is a visual desktop publishing workspace for preparing, organizing, and posti
 - Create templates, duplicate posts, apply bulk tags, and remove one or many drafts
 - Open ChatGPT, Claude, Gemini, or DeepSeek beside the editor
 - Connect accounts through automatic Tumblr OAuth 2 authorization
+- Preserve Tumblr's Mature, Drug Use, Violence, and Sexual Themes labels when posting
 
 ## Account connection
 

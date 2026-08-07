@@ -4,6 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 const { spawn } = require("child_process");
+const { tumblrCommunityLabelPayload } = require("./tumblr-labels");
 const authorizationSessions = new Map();
 const OAUTH_SERVICE_URL = "https://qu-tumblr-auth.nullgurl.workers.dev";
 const aiSidebars = new Map();
@@ -134,7 +135,7 @@ async function refreshOAuth2Profile(profile) {
   if (!profile.refreshToken) throw new Error("Reconnect this Tumblr account to renew access.");
   const response = await fetchWithTimeout(`${OAUTH_SERVICE_URL}/v2/oauth/refresh`, {
     method: "POST",
-    headers: { "content-type": "application/json", "User-Agent": "Qu/0.8.1" },
+    headers: { "content-type": "application/json", "User-Agent": "Qu/0.8.2" },
     body: JSON.stringify({ refreshToken: decrypt(profile.refreshToken) })
   });
   const values = await response.json();
@@ -159,7 +160,7 @@ async function tumblrRequest(profile, method, url, options = {}) {
       method,
       headers: {
         Authorization: `Bearer ${decrypt(profile.accessToken)}`,
-        "User-Agent": "Qu/0.8.1",
+        "User-Agent": "Qu/0.8.2",
         ...(options.headers || {})
       },
       body: options.body
@@ -187,7 +188,7 @@ async function tumblrRequest(profile, method, url, options = {}) {
     method,
     headers: {
       Authorization: authorization,
-      "User-Agent": "Qu/0.8.1",
+      "User-Agent": "Qu/0.8.2",
       ...(options.headers || {})
     },
     body: options.body
@@ -380,14 +381,6 @@ function normalizeTags(tags) {
   return result;
 }
 
-function normalizeContentLabels(labels) {
-  const result = [...new Set((labels || []).filter(Boolean))];
-  if (result.some((label) => label !== "mature") && !result.includes("mature")) {
-    result.unshift("mature");
-  }
-  return result;
-}
-
 function safeUploadName(name, index, mimeType) {
   const fallbackExtension = {
     "image/jpeg": ".jpg", "image/png": ".png", "image/gif": ".gif", "image/webp": ".webp"
@@ -455,10 +448,7 @@ async function publishPost(profile, post) {
     if (!post.schedule) throw new Error("A scheduled post needs a date and time.");
     payload.publish_on = new Date(post.schedule).toISOString();
   }
-  const contentLabels = normalizeContentLabels(post.contentLabels);
-  if (contentLabels.length) {
-    payload.content_labels = contentLabels;
-  }
+  Object.assign(payload, tumblrCommunityLabelPayload(post.contentLabels));
   const endpoint = `https://api.tumblr.com/v2/blog/${percentEncode(profile.blog)}/posts`;
   if (!uploads.length) {
     return tumblrRequest(profile, "POST", endpoint, {
@@ -771,7 +761,7 @@ ipcMain.handle("begin-authorization", async (_event, id) => {
     if (!profile) return { ok: false, message: "Save this account profile first." };
     const response = await fetchWithTimeout(`${OAUTH_SERVICE_URL}/v2/oauth/start`, {
       method: "POST",
-      headers: { "User-Agent": "Qu/0.8.1", "Cache-Control": "no-cache" }
+      headers: { "User-Agent": "Qu/0.8.2", "Cache-Control": "no-cache" }
     });
     const values = await response.json();
     if (!response.ok || !values.authorizeUrl || !values.sessionId || !values.sessionKey) {
@@ -796,7 +786,7 @@ ipcMain.handle("complete-authorization", async (_event, id) => {
     }
     const response = await fetchWithTimeout(
       `${OAUTH_SERVICE_URL}/v1/oauth/session/${pending.sessionId}`,
-      { headers: { Authorization: `Bearer ${pending.sessionKey}`, "User-Agent": "Qu/0.8.1" } }
+      { headers: { Authorization: `Bearer ${pending.sessionKey}`, "User-Agent": "Qu/0.8.2" } }
     );
     const values = await response.json();
     if (response.ok && values.status === "pending") return { ok: true, pending: true };
