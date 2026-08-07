@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Qu</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="content-labels.css">
+  <link rel="stylesheet" href="account-manager.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><img class="brand-mark" src="assets/qu-icon.svg" alt=""><div><strong>Qu</strong><small>Tumblr queue studio</small></div></div>
+      <button class="new-post primary" id="new-post">＋ New post</button>
+      <nav>
+        <button class="nav-item active" data-view="workspace"><span>▦</span>Workspace <b id="draft-count">0</b></button>
+        <button class="nav-item" data-view="queue"><span>◷</span>Ready to queue <b id="ready-count">0</b></button>
+        <button class="nav-item" data-view="templates"><span>◇</span>Templates</button>
+        <button class="nav-item" data-view="calendar"><span>▣</span>Calendar</button>
+      </nav>
+      <section class="mini-calendar" aria-label="Posting calendar">
+        <header><button id="mini-calendar-prev" aria-label="Previous month">‹</button><strong id="mini-calendar-title">Month</strong><button id="mini-calendar-next" aria-label="Next month">›</button></header>
+        <div class="mini-calendar-weekdays"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
+        <div class="mini-calendar-grid" id="mini-calendar-grid"></div>
+        <small id="mini-calendar-focus">Select a posting day</small>
+      </section>
+      <div class="sidebar-spacer"></div>
+      <section class="account-card">
+        <span class="status-dot"></span>
+        <div><strong id="active-account-name">Local workspace</strong><small id="active-account-blog">Connect up to four accounts</small></div>
+        <button id="connect-account">Switch</button>
+      </section>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Publishing workspace</p>
+          <h1>Build your week in one sitting.</h1>
+        </div>
+        <div class="top-actions">
+          <button class="ghost ai-launcher" id="ai-sidebar-toggle" aria-expanded="false">✦ AI</button>
+          <button class="ghost" id="queue-schedule">Queue schedule</button>
+          <button class="ghost" id="save-template">Save as template</button>
+          <button class="primary" id="queue-all">Queue ready posts <span id="queue-ready-label">0</span></button>
+        </div>
+      </header>
+
+      <section class="stats" id="stats-section">
+        <article><span>Drafts</span><strong id="stat-drafts">0</strong><small>in this workspace</small></article>
+        <article><span>Ready</span><strong id="stat-ready">0</strong><small>validated posts</small></article>
+        <article><span>Images</span><strong id="stat-images">0</strong><small>prepared to upload</small></article>
+        <article class="accent"><span>Next Qu schedule time</span><strong id="next-queue-time">Connect an account</strong><small id="queue-summary">Choose between 1 and 50 daily times</small></article>
+      </section>
+
+      <section class="toolbar" id="workspace-toolbar">
+        <div class="search-wrap"><span>⌕</span><input id="search" placeholder="Search drafts, tags, or captions"></div>
+        <div class="segmented">
+          <button class="active" data-filter="all">All</button>
+          <button data-filter="draft">Needs work</button>
+          <button data-filter="ready">Ready</button>
+        </div>
+        <button class="ghost" id="bulk-tags"># Bulk tags</button>
+        <button class="ghost" id="duplicate-selected">Duplicate</button>
+        <button class="ghost danger-ghost" id="remove-selected">Remove selected</button>
+        <button class="ghost danger-ghost" id="clear-queue">Clear queue</button>
+      </section>
+
+      <section class="workspace" id="workspace-section">
+        <div class="composer-panel">
+          <div class="panel-heading">
+            <div><p class="eyebrow">Post editor</p><h2 id="editor-title">New queue post</h2></div>
+            <span class="save-state" id="save-state">Saved locally</span>
+          </div>
+
+          <label class="field"><span>Post title <em>optional</em></span><input id="post-title" placeholder="Give this draft a working title"></label>
+          <label class="field"><span>Caption</span><textarea id="caption" rows="7" placeholder="Write something worth stopping for…"></textarea></label>
+
+          <div class="media-zone" id="media-zone">
+            <div class="media-empty" id="media-empty"><span>↑</span><strong>Drop images here</strong><small>or click to choose JPG, PNG, GIF, or WebP</small></div>
+            <div class="media-grid" id="media-grid"></div>
+          </div>
+
+          <label class="field"><span>Tags</span><input id="tags" placeholder="#art #photography #behind the scenes"></label>
+
+          <fieldset class="content-labels">
+            <legend>Content labels</legend>
+            <p id="content-label-help">Leave all unchecked for <strong>For Everyone</strong>. Choosing any specific warning automatically enables <strong>Mature</strong>.</p>
+            <div class="content-label-grid" aria-describedby="content-label-help">
+              <label><input type="checkbox" name="content-label" value="mature"><span><b>Mature</b><small>General mature content</small></span></label>
+              <label><input type="checkbox" name="content-label" value="drug-and-alcohol-addiction"><span><b>Drug and Alcohol Addiction</b><small>Substance-use themes</small></span></label>
+              <label><input type="checkbox" name="content-label" value="violence"><span><b>Violence</b><small>Violent or graphic themes</small></span></label>
+              <label><input type="checkbox" name="content-label" value="sexual-themes"><span><b>Sexual Themes</b><small>Sexual or suggestive themes</small></span></label>
+            </div>
+          </fieldset>
+
+          <div class="two-columns">
+            <label class="field"><span>Publish mode</span><select id="post-state"><option value="queue">Tumblr native queue</option><option value="qu-schedule">Qu daily schedule</option><option value="scheduled">Choose an exact time</option><option value="draft">Save as Tumblr draft</option><option value="published">Publish now</option></select></label>
+            <label class="field"><span>Scheduled time</span><input id="schedule-time" type="datetime-local" disabled></label>
+          </div>
+
+          <div class="preset-row"><span>Quick tags</span><button data-preset="photography, original photography, photographers on tumblr">Photography</button><button data-preset="art, artists on tumblr, illustration">Art</button><button data-preset="personal, journal, thoughts">Journal</button></div>
+
+          <footer class="composer-actions">
+            <button class="danger-link" id="delete-post">Delete draft</button>
+            <div><button class="ghost" id="clear-editor">Clear</button><button class="primary" id="save-post">Save to workspace</button></div>
+          </footer>
+        </div>
+
+        <div class="queue-column">
+          <aside class="ai-sidebar-shell" id="ai-sidebar-shell" aria-label="AI assistants">
+            <header class="ai-sidebar-header">
+              <div><strong id="ai-provider-title">ChatGPT</strong><small>Private web session · sign in directly with the provider</small></div>
+              <div class="ai-header-actions">
+                <button id="ai-reload" title="Reload assistant" aria-label="Reload assistant">↻</button>
+                <button id="ai-open-external" title="Open in browser" aria-label="Open in browser">↗</button>
+                <button id="ai-close" title="Close assistant" aria-label="Close assistant">×</button>
+              </div>
+            </header>
+            <nav class="ai-provider-rail" aria-label="Choose an AI assistant">
+              <button class="active" data-ai-provider="chatgpt" title="ChatGPT"><span>G</span><small>GPT</small></button>
+              <button data-ai-provider="claude" title="Claude"><span>C</span><small>Claude</small></button>
+              <button data-ai-provider="gemini" title="Gemini"><span>✦</span><small>Gemini</small></button>
+              <button data-ai-provider="deepseek" title="DeepSeek"><span>D</span><small>Deep</small></button>
+              <button data-ai-provider="copilot" title="Microsoft Copilot"><span>M</span><small>Copilot</small></button>
+            </nav>
+            <section class="ai-preview-placeholder" aria-hidden="true">
+              <div class="ai-preview-orb">✦</div>
+              <p class="eyebrow">AI writing room</p>
+              <h3>What are we making today?</h3>
+              <p>Choose an assistant above. In the Qu desktop app, its complete website and your signed-in conversations appear here.</p>
+              <div class="ai-preview-prompts">
+                <span>Polish this caption</span><span>Suggest Tumblr tags</span><span>Plan a week of posts</span>
+              </div>
+            </section>
+          </aside>
+          <div class="queue-panel">
+          <div class="panel-heading">
+            <div><p class="eyebrow">Visual queue</p><h2>Your posts</h2></div>
+            <span class="sort-label">Newest first</span>
+          </div>
+          <div class="post-list" id="post-list"></div>
+          <div class="empty-list" id="empty-list"><span>✦</span><strong>Your workspace is clear</strong><small>Create a post or load the starter examples.</small><button id="load-demo">Load examples</button></div>
+          </div>
+        </div>
+      </section>
+      <section class="calendar-view" id="calendar-view" hidden>
+        <header class="calendar-view-header">
+          <div><p class="eyebrow">Publishing calendar</p><h2 id="calendar-view-title">Month</h2><small id="calendar-sync-status">Local posts · connect Tumblr to sync</small></div>
+          <div class="calendar-view-actions"><button class="ghost" id="calendar-today">Today</button><button class="ghost" id="calendar-prev">‹</button><button class="ghost" id="calendar-next">›</button><button class="ghost" id="calendar-sync">Sync Tumblr</button><button class="primary" id="calendar-new-post">＋ Post on selected day</button></div>
+        </header>
+        <div class="calendar-legend"><span class="local">Local draft</span><span class="qu">Qu schedule</span><span class="tumblr">Confirmed on Tumblr</span><span class="native">Tumblr-controlled</span></div>
+        <div class="calendar-weekdays"><span>Sunday</span><span>Monday</span><span>Tuesday</span><span>Wednesday</span><span>Thursday</span><span>Friday</span><span>Saturday</span></div>
+        <div class="calendar-month-grid" id="calendar-month-grid"></div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="connect-dialog">
+    <form method="dialog">
+      <button class="dialog-close" value="cancel">×</button>
+      <p class="eyebrow">Tumblr connection</p>
+      <h2>Your Tumblr accounts</h2>
+      <p>Keep up to four isolated account workspaces and switch between them instantly.</p>
+      <div class="account-list" id="account-list"></div>
+      <div class="account-capacity"><span id="account-count">0 of 4 connected</span><button type="button" id="show-account-form">＋ Add account</button></div>
+      <section id="account-form">
+      <input id="profile-id" type="hidden">
+      <label class="field"><span>Profile name</span><input id="profile-name" placeholder="Main blog, Art blog…"></label>
+      <label class="field"><span>Blog identifier</span><input id="blog-name" placeholder="yourblog.tumblr.com"></label>
+      <details class="existing-token-fields">
+        <summary>Legacy/manual Tumblr credentials</summary>
+        <label class="field"><span>Consumer key</span><input id="consumer-key" autocomplete="off"></label>
+        <label class="field"><span>Consumer secret</span><input id="consumer-secret" type="password" autocomplete="off"></label>
+        <label class="field"><span>Registered callback URL</span><input id="callback-url"></label>
+        <label class="field"><span>Access token</span><input id="access-token" type="password" autocomplete="off"></label>
+        <label class="field"><span>Access token secret</span><input id="access-token-secret" type="password" autocomplete="off"></label>
+      </details>
+      <div class="dialog-actions"><button class="ghost" type="button" id="cancel-account-form">Clear</button><button class="primary" id="save-connection" value="default">Save and switch</button></div>
+      </section>
+      <section class="authorization-panel" id="authorization-panel" hidden>
+        <strong>Authorize the selected account</strong>
+        <p>Qu will open Tumblr. Approve the app once and Qu will finish connecting automatically.</p>
+        <div class="browser-choice">
+          <label for="authorization-browser">Open authorization in</label>
+          <select id="authorization-browser">
+            <option value="default">System default</option>
+            <option value="brave">Brave</option>
+            <option value="firefox">Firefox</option>
+            <option value="zen">Zen Browser</option>
+            <option value="chrome">Google Chrome</option>
+          </select>
+        </div>
+        <div class="authorization-actions"><button type="button" class="primary" id="begin-authorization">Connect with Tumblr</button><button type="button" class="ghost" id="verify-account">Verify connection</button></div>
+        <div class="authorization-status" id="authorization-status" role="status">Ready to authorize.</div>
+        <div class="authorization-link" id="authorization-link" hidden>
+          <input id="authorize-url" readonly aria-label="Tumblr authorization URL">
+          <button type="button" class="ghost" id="open-authorization-again">Open again</button>
+          <button type="button" class="ghost" id="copy-authorization-link">Copy link</button>
+        </div>
+        <input id="authorization-result" type="hidden">
+        <button type="button" class="primary finish-authorization" id="finish-authorization">Check connection now</button>
+      </section>
+      <small class="security-note">The desktop app encrypts your secret using your computer’s protected credential storage. Tumblr authorization is the next connection step; never share these credentials in screenshots.</small>
+    </form>
+  </dialog>
+  <dialog id="schedule-dialog">
+    <form method="dialog">
+      <button class="dialog-close" value="cancel">×</button>
+      <p class="eyebrow">Qu daily schedule</p>
+      <h2>Choose how often Qu should post</h2>
+      <p>Qu assigns posts using these exact daily times in this computer’s time zone. Tumblr’s native queue remains a separate publishing option.</p>
+      <div class="queue-sync-card">
+        <div><span>Posts already on Tumblr</span><strong id="remote-queue-count">—</strong></div>
+        <div><span>Estimated final queued post</span><strong id="remote-last-queue">—</strong></div>
+        <button type="button" class="ghost" id="refresh-queue">Refresh Tumblr queue</button>
+      </div>
+      <div class="schedule-frequency">
+        <label class="field"><span>Posts per day</span><input id="queue-posts-per-day" type="number" min="1" max="50" value="6"></label>
+        <button type="button" class="ghost" id="evenly-space-times">Space times evenly</button>
+      </div>
+      <div class="time-grid" id="queue-time-grid"></div>
+      <div class="native-queue-note"><div><strong>Tumblr native queue settings</strong><small>Tumblr’s public API does not let Qu change this frequency.</small></div><button type="button" class="ghost" id="open-tumblr-queue-settings">Open Tumblr settings</button></div>
+      <div class="dialog-actions"><button class="ghost" value="cancel">Cancel</button><button class="primary" type="button" id="save-queue-times">Save Qu schedule</button></div>
+      <small class="security-note">Qu-scheduled posts use exact scheduled times. Native queue posts use the frequency already configured on Tumblr.</small>
+    </form>
+  </dialog>
+  <div class="toast" id="toast"></div>
+  <script src="renderer.js"></script>
+</body>
+</html>

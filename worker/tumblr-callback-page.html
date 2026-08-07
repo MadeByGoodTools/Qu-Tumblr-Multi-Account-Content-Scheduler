@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Connecting Tumblr to Qu</title>
+  <style>
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #0b0f14; color: #f7f8fa; font: 16px system-ui, sans-serif; }
+    main { width: min(34rem, calc(100% - 4rem)); padding: 2.5rem; border: 1px solid #28313d; border-radius: 24px; background: #121820; box-shadow: 0 24px 80px #0008; }
+    h1 { margin-top: 0; color: #62e69a; }
+    p { color: #cad1d9; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Connecting to Qu…</h1>
+    <p id="status">Finishing Tumblr authorization. This should only take a moment.</p>
+  </main>
+  <script>
+    (() => {
+      const source = new URLSearchParams(location.search);
+      const destination = new URL("https://qu-tumblr-auth.nullgurl.workers.dev/v1/oauth/callback");
+      for (const name of ["code", "state", "error", "error_description"]) {
+        const value = source.get(name);
+        if (value) destination.searchParams.set(name, value);
+      }
+      if (!destination.searchParams.has("error") &&
+          (!destination.searchParams.has("code") || !destination.searchParams.has("state"))) {
+        document.querySelector("#status").textContent = "Tumblr did not return a complete authorization response. Return to Qu and try again.";
+        return;
+      }
+      location.replace(destination.toString());
+    })();
+  </script>
+</body>
+</html>
