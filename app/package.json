@@ -1,0 +1,93 @@
+{
+  "name": "tumblr-queue-studio",
+  "version": "0.8.1",
+  "description": "Qu — a visual desktop queue manager for Tumblr.",
+  "author": "NullGurll",
+  "main": "main.js",
+  "license": "MPL-2.0",
+  "packageManager": "pnpm@11.16.0",
+  "scripts": {
+    "start": "electron .",
+    "dist:win": "electron-builder --win nsis --x64",
+    "dist:win:portable": "electron-builder --win portable --x64",
+    "dist:mac": "electron-builder --mac dmg --universal"
+  },
+  "devDependencies": {
+    "electron": "^37.2.3",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "app.qu.tumblr",
+    "productName": "Qu",
+    "files": [
+      "main.js",
+      "preload.js",
+      "index.html",
+      "styles.css",
+      "content-labels.css",
+      "account-manager.css",
+      "renderer.js",
+      "assets/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/qu-icon.png",
+      "artifactName": "Qu-Setup-${version}-${arch}.exe"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true,
+      "shortcutName": "Qu",
+      "uninstallDisplayName": "Qu",
+      "deleteAppDataOnUninstall": false,
+      "runAfterFinish": true
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "universal"
+          ]
+        }
+      ],
+      "category": "public.app-category.social-networking",
+      "icon": "assets/icons/qu-512.png",
+      "artifactName": "Qu-Setup-${version}-${arch}.${ext}",
+      "identity": null
+    },
+    "dmg": {
+      "title": "Qu ${version}",
+      "icon": "assets/icons/qu-512.png",
+      "backgroundColor": "#0b0f14",
+      "window": {
+        "width": 540,
+        "height": 380
+      },
+      "contents": [
+        {
+          "x": 150,
+          "y": 185,
+          "type": "file"
+        },
+        {
+          "x": 390,
+          "y": 185,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    }
+  }
+}

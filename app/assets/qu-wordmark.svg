@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 220">
+  <defs>
+    <linearGradient id="mark" x1="12" y1="12" x2="200" y2="208"><stop stop-color="#79B6FF"/><stop offset=".52" stop-color="#7778F3"/><stop offset="1" stop-color="#E17BC1"/></linearGradient>
+    <linearGradient id="letter" x1="70" y1="38" x2="155" y2="198"><stop stop-color="#273142"/><stop offset=".45" stop-color="#111722"/><stop offset="1" stop-color="#020409"/></linearGradient>
+  </defs>
+  <rect x="10" y="10" width="200" height="200" rx="58" fill="url(#mark)"/>
+  <path d="M38 108c0-41 27-69 69-69s69 28 69 69c0 20-7 38-19 50l22 21-24 23-24-23c-7 3-15 4-24 4-42 0-69-29-69-75Zm34 0c0 26 13 42 35 42 4 0 7 0 10-1l-16-15 23-22 15 15c2-5 3-12 3-19 0-25-13-41-35-41s-35 16-35 41Z" fill="url(#letter)"/>
+  <text x="248" y="148" fill="#F7F8FC" font-family="Inter,Segoe UI,sans-serif" font-size="116" font-weight="780" letter-spacing="-7">Qu</text>
+  <text x="500" y="140" fill="#9DA5B8" font-family="Inter,Segoe UI,sans-serif" font-size="29" font-weight="600">Tumblr queue studio</text>
+</svg>

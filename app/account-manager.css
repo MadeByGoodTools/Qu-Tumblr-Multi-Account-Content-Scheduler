@@ -1,0 +1,271 @@
+.account-list {
+  display: grid;
+  gap: 8px;
+  margin: 18px 0 10px;
+}
+
+.account-row {
+  display: grid;
+  grid-template-columns: 10px 1fr auto auto;
+  align-items: center;
+  gap: 10px;
+  padding: 11px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: #171b25;
+}
+
+.account-row.active {
+  border-color: #6e94e8;
+  background: rgba(92, 127, 204, .16);
+}
+
+.account-row .account-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #596171;
+}
+
+.account-row.active .account-indicator {
+  background: var(--green);
+  box-shadow: 0 0 12px rgba(120, 214, 165, .55);
+}
+
+.account-row strong,
+.account-row small {
+  display: block;
+}
+
+.account-row small {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.account-row button {
+  padding: 7px 9px;
+  border-radius: 8px;
+  background: #252b38;
+  color: #cdd2dc;
+  font-size: 10px;
+}
+
+.account-row .remove-account {
+  color: var(--danger);
+}
+
+.account-capacity {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 8px 0 16px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.account-capacity button {
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: #232a38;
+  color: var(--blue);
+}
+
+#account-form {
+  padding-top: 15px;
+  border-top: 1px solid var(--line);
+}
+
+.existing-token-fields {
+  margin: 2px 0 14px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.existing-token-fields summary {
+  margin-bottom: 12px;
+  cursor: pointer;
+  color: var(--blue);
+}
+
+.authorization-panel {
+  margin-top: 17px;
+  padding: 15px;
+  border: 1px solid #35415a;
+  border-radius: 12px;
+  background: rgba(70, 96, 150, .12);
+}
+
+.authorization-panel > strong {
+  font-size: 13px;
+}
+
+.authorization-panel > p {
+  margin: 6px 0 13px !important;
+}
+
+.authorization-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 13px;
+}
+
+.browser-choice {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 10px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.browser-choice select {
+  min-width: 0;
+  padding: 8px 9px;
+  border: 1px solid #34405a;
+  border-radius: 8px;
+  background: #0c1018;
+  color: #dce2ed;
+}
+
+.authorization-status {
+  margin: 0 0 11px;
+  padding: 9px 10px;
+  border-radius: 9px;
+  background: #111722;
+  color: #b9c5da;
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.authorization-status.error {
+  background: rgba(189, 67, 67, .13);
+  color: #ffaaaa;
+}
+
+.authorization-status.success {
+  background: rgba(67, 170, 114, .13);
+  color: #9be0b8;
+}
+
+.authorization-link {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.authorization-link[hidden] {
+  display: none;
+}
+
+.authorization-link input {
+  min-width: 0;
+  padding: 9px;
+  border: 1px solid #34405a;
+  border-radius: 8px;
+  background: #0c1018;
+  color: #9fb4dd;
+  font-size: 9px;
+}
+
+.authorization-panel .field {
+  margin-bottom: 10px;
+}
+
+.finish-authorization {
+  width: 100%;
+}
+
+.account-row .verified-account {
+  color: var(--green);
+}
+
+.pill.sent {
+  background: rgba(92, 126, 214, .18);
+  color: #9db9ff;
+}
+
+.queue-sync-card {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr auto;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: #171b25;
+}
+
+.queue-sync-card span,
+.queue-sync-card strong {
+  display: block;
+}
+
+.queue-sync-card span {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.queue-sync-card strong {
+  margin-top: 4px;
+  font-size: 12px;
+}
+
+.time-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.time-grid label span {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.time-grid input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #303646;
+  border-radius: 9px;
+  background: #0d1016;
+  color: #fff;
+}
+
+.schedule-frequency {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) auto;
+  align-items: end;
+  gap: 12px;
+  margin: 18px 0 14px;
+}
+
+.schedule-frequency .field { margin: 0; }
+
+.time-grid {
+  max-height: 260px;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.native-queue-note {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 12px;
+  border: 1px solid rgba(114, 167, 255, .22);
+  border-radius: 11px;
+  background: rgba(68, 101, 161, .1);
+}
+
+.native-queue-note strong,
+.native-queue-note small { display: block; }
+
+.native-queue-note strong { font-size: 12px; }
+.native-queue-note small { margin-top: 4px; color: var(--muted); font-size: 10px; }
