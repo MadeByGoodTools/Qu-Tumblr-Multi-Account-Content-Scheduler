@@ -1,22 +1,37 @@
 # Qu
 
-Qu is a visual desktop publishing workspace for preparing, organizing, and posting multiple Tumblr posts efficiently.
+Qu is a visual desktop publishing workspace for preparing, organizing, scheduling, and posting multiple Tumblr posts efficiently.
 
-[Download Qu 0.8.2](https://github.com/NullGurll/qu/releases/tag/v0.8.2)
+**Current version: 0.8.3**
+
+| Platform | Download |
+| --- | --- |
+| Windows 64-bit | [Qu 0.8.3 installer](https://github.com/NullGurll/Qu/releases/download/v0.8.3/Qu-Setup-0.8.3-x64.exe) |
+| macOS Intel and Apple Silicon | [Qu 0.8.3 universal installer](https://github.com/NullGurll/Qu/releases/download/v0.8.3/Qu-Setup-0.8.3-universal.dmg) |
+
+[Release notes and checksums](https://github.com/NullGurll/Qu/releases/tag/v0.8.3)
 
 ![Qu visual posting workspace](docs/images/qu-workspace.png)
 
 ## Highlights
 
 - Prepare text and image posts from one organized workspace
-- Add captions, individual tags, Tumblr content labels, and publishing modes
+- Add captions, images, separately parsed tags, Tumblr content labels, and publishing modes
 - Publish immediately, schedule a specific time, use Qu's posting times, or add to Tumblr's native queue
 - Manage as many as four Tumblr accounts and switch between their separate workspaces
 - Synchronize the active account's Tumblr queue and calendar
 - Create templates, duplicate posts, apply bulk tags, and remove one or many drafts
 - Open ChatGPT, Claude, Gemini, or DeepSeek beside the editor
 - Connect accounts through automatic Tumblr OAuth 2 authorization
-- Preserve Tumblr's Mature, Drug Use, Violence, and Sexual Themes labels when posting
+- Preserve Tumblr's Mature, Drug & Alcohol Addiction, Violence, and Sexual Themes labels when posting
+
+## What changed in 0.8.3
+
+- Content-label changes are saved immediately for existing posts.
+- The open editor is synchronized before Qu assembles a posting batch, preventing a previously saved unlabeled copy from being sent.
+- Selecting Drug & Alcohol Addiction, Violence, or Sexual Themes automatically enables Mature.
+- Tumblr receives its current native community-label fields and category identifiers.
+- Regression tests now cover changing labels after saving and posting directly from the open editor.
 
 ## Account connection
 
@@ -44,6 +59,13 @@ pnpm start
 ```
 
 Build installers with `pnpm run dist:win` or `pnpm run dist:mac`.
+
+Run the automated checks with:
+
+```bash
+cd app
+pnpm test
+```
 
 ## Privacy and security
 
