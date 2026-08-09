@@ -135,7 +135,7 @@ async function refreshOAuth2Profile(profile) {
   if (!profile.refreshToken) throw new Error("Reconnect this Tumblr account to renew access.");
   const response = await fetchWithTimeout(`${OAUTH_SERVICE_URL}/v2/oauth/refresh`, {
     method: "POST",
-    headers: { "content-type": "application/json", "User-Agent": "Qu/0.8.2" },
+    headers: { "content-type": "application/json", "User-Agent": "Qu/0.8.3" },
     body: JSON.stringify({ refreshToken: decrypt(profile.refreshToken) })
   });
   const values = await response.json();
@@ -160,7 +160,7 @@ async function tumblrRequest(profile, method, url, options = {}) {
       method,
       headers: {
         Authorization: `Bearer ${decrypt(profile.accessToken)}`,
-        "User-Agent": "Qu/0.8.2",
+        "User-Agent": "Qu/0.8.3",
         ...(options.headers || {})
       },
       body: options.body
@@ -188,7 +188,7 @@ async function tumblrRequest(profile, method, url, options = {}) {
     method,
     headers: {
       Authorization: authorization,
-      "User-Agent": "Qu/0.8.2",
+      "User-Agent": "Qu/0.8.3",
       ...(options.headers || {})
     },
     body: options.body
@@ -761,7 +761,7 @@ ipcMain.handle("begin-authorization", async (_event, id) => {
     if (!profile) return { ok: false, message: "Save this account profile first." };
     const response = await fetchWithTimeout(`${OAUTH_SERVICE_URL}/v2/oauth/start`, {
       method: "POST",
-      headers: { "User-Agent": "Qu/0.8.2", "Cache-Control": "no-cache" }
+      headers: { "User-Agent": "Qu/0.8.3", "Cache-Control": "no-cache" }
     });
     const values = await response.json();
     if (!response.ok || !values.authorizeUrl || !values.sessionId || !values.sessionKey) {
@@ -786,7 +786,7 @@ ipcMain.handle("complete-authorization", async (_event, id) => {
     }
     const response = await fetchWithTimeout(
       `${OAUTH_SERVICE_URL}/v1/oauth/session/${pending.sessionId}`,
-      { headers: { Authorization: `Bearer ${pending.sessionKey}`, "User-Agent": "Qu/0.8.2" } }
+      { headers: { Authorization: `Bearer ${pending.sessionKey}`, "User-Agent": "Qu/0.8.3" } }
     );
     const values = await response.json();
     if (response.ok && values.status === "pending") return { ok: true, pending: true };
