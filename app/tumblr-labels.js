@@ -27,4 +27,31 @@ function tumblrCommunityLabelPayload(labels) {
   };
 }
 
-module.exports = { normalizeContentLabels, tumblrCommunityLabelPayload };
+function tumblrPostCommunityLabelState(post) {
+  const labels = post?.community_labels || post?.communityLabels || {};
+  const categories = labels.categories || post?.community_label_categories || post?.communityLabelCategories || [];
+  const active = labels.has_community_label ?? labels.hasCommunityLabel ??
+    post?.has_community_label ?? post?.hasCommunityLabel ?? false;
+  return {
+    active: Boolean(active),
+    categories: [...new Set((Array.isArray(categories) ? categories : [])
+      .map((category) => String(category || "").trim())
+      .filter(Boolean))].sort()
+  };
+}
+
+function tumblrPostHasContentLabels(post, labels) {
+  const expected = tumblrCommunityLabelPayload(labels);
+  if (!expected.has_community_label) return true;
+  const actual = tumblrPostCommunityLabelState(post);
+  const categories = [...expected.community_label_categories].sort();
+  return actual.active && categories.length === actual.categories.length &&
+    categories.every((category, index) => category === actual.categories[index]);
+}
+
+module.exports = {
+  normalizeContentLabels,
+  tumblrCommunityLabelPayload,
+  tumblrPostCommunityLabelState,
+  tumblrPostHasContentLabels
+};

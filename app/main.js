@@ -4,7 +4,8 @@ const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 const { spawn } = require("child_process");
-const { tumblrCommunityLabelPayload } = require("./tumblr-labels");
+const { tumblrCommunityLabelPayload, tumblrPostHasContentLabels } = require("./tumblr-labels");
+const { isTumblrAuthorizationUrl } = require("./tumblr-auth");
 const authorizationSessions = new Map();
 const OAUTH_SERVICE_URL = "https://qu-tumblr-auth.nullgurl.workers.dev";
 const aiSidebars = new Map();
@@ -135,7 +136,7 @@ async function refreshOAuth2Profile(profile) {
   if (!profile.refreshToken) throw new Error("Reconnect this Tumblr account to renew access.");
   const response = await fetchWithTimeout(`${OAUTH_SERVICE_URL}/v2/oauth/refresh`, {
     method: "POST",
-    headers: { "content-type": "application/json", "User-Agent": "Qu/0.8.3" },
+    headers: { "content-type": "application/json", "User-Agent": "Qu/0.8.4" },
     body: JSON.stringify({ refreshToken: decrypt(profile.refreshToken) })
   });
   const values = await response.json();
@@ -160,7 +161,7 @@ async function tumblrRequest(profile, method, url, options = {}) {
       method,
       headers: {
         Authorization: `Bearer ${decrypt(profile.accessToken)}`,
-        "User-Agent": "Qu/0.8.3",
+        "User-Agent": "Qu/0.8.4",
         ...(options.headers || {})
       },
       body: options.body
@@ -188,7 +189,7 @@ async function tumblrRequest(profile, method, url, options = {}) {
     method,
     headers: {
       Authorization: authorization,
-      "User-Agent": "Qu/0.8.3",
+      "User-Agent": "Qu/0.8.4",
       ...(options.headers || {})
     },
     body: options.body
@@ -450,20 +451,66 @@ async function publishPost(profile, post) {
   }
   Object.assign(payload, tumblrCommunityLabelPayload(post.contentLabels));
   const endpoint = `https://api.tumblr.com/v2/blog/${percentEncode(profile.blog)}/posts`;
+  const response = await submitNpfPost(profile, "POST", endpoint, payload, uploads);
+  const postId = response?.response?.id || response?.response?.id_string || null;
+  let labelsConfirmed = !(post.contentLabels || []).length;
+  if (postId && (post.contentLabels || []).length) {
+    labelsConfirmed = await ensurePostContentLabels(profile, postId, payload, uploads, post.contentLabels);
+  }
+  return { response, labelsConfirmed };
+}
+
+async function submitNpfPost(profile, method, endpoint, payload, uploads) {
   if (!uploads.length) {
-    return tumblrRequest(profile, "POST", endpoint, {
+    return tumblrRequest(profile, method, endpoint, {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
   }
   const multipart = multipartPostBody(payload, uploads);
-  return tumblrRequest(profile, "POST", endpoint, {
+  return tumblrRequest(profile, method, endpoint, {
     headers: {
       "Content-Type": `multipart/form-data; boundary=${multipart.boundary}`,
       "Content-Length": String(multipart.body.length)
     },
     body: multipart.body
   });
+}
+
+async function fetchTumblrPost(profile, postId) {
+  const endpoint = `https://api.tumblr.com/v2/blog/${percentEncode(profile.blog)}/posts/${percentEncode(postId)}?post_format=npf`;
+  const data = await tumblrRequest(profile, "GET", endpoint);
+  return data?.response?.posts?.[0] || data?.response || null;
+}
+
+async function fetchTumblrPostWithRetry(profile, postId, attempts = 3) {
+  let lastError;
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    try {
+      const post = await fetchTumblrPost(profile, postId);
+      if (post) return post;
+    } catch (error) {
+      lastError = error;
+    }
+    if (attempt < attempts - 1) {
+      await new Promise((resolve) => setTimeout(resolve, 500 * (attempt + 1)));
+    }
+  }
+  if (lastError) throw lastError;
+  return null;
+}
+
+async function ensurePostContentLabels(profile, postId, payload, uploads, labels) {
+  try {
+    let remotePost = await fetchTumblrPostWithRetry(profile, postId);
+    if (tumblrPostHasContentLabels(remotePost, labels)) return true;
+    const endpoint = `https://api.tumblr.com/v2/blog/${percentEncode(profile.blog)}/posts/${percentEncode(postId)}`;
+    await submitNpfPost(profile, "PUT", endpoint, payload, uploads);
+    remotePost = await fetchTumblrPostWithRetry(profile, postId);
+    return tumblrPostHasContentLabels(remotePost, labels);
+  } catch {
+    return false;
+  }
 }
 
 function settingsPath() {
@@ -503,7 +550,7 @@ function findBrowserExecutable(browserName) {
 }
 
 async function launchBrowser(browserName, url) {
-  if (!/^https:\/\/www\.tumblr\.com\/oauth\//.test(url)) {
+  if (!isTumblrAuthorizationUrl(url)) {
     throw new Error("Qu will only open Tumblr authorization links.");
   }
   if (!browserName || browserName === "default") {
@@ -598,7 +645,7 @@ function createWindow() {
       nodeIntegration: false
     }
   });
-  const sidebarState = { open: true, width: 480, provider: "chatgpt", loadedProvider: null, view: null, bounds: null };
+  const sidebarState = { open: true, obscured: false, width: 480, provider: "chatgpt", loadedProvider: null, view: null, bounds: null };
   aiSidebars.set(win.id, sidebarState);
   win.on("resize", () => updateAiSidebarBounds(win));
   win.on("closed", () => {
@@ -652,12 +699,25 @@ ipcMain.handle("ai-sidebar-open", (event, shouldOpen) => {
   const win = BrowserWindow.fromWebContents(event.sender);
   const state = win && aiSidebars.get(win.id);
   if (!win || !state) return null;
-  if (shouldOpen) openAiSidebar(win, state);
-  else {
-    state.open = false;
+  state.open = Boolean(shouldOpen);
+  if (state.open && !state.obscured) openAiSidebar(win, state);
+  else if (!state.open) {
     if (state.view && win.contentView.children.includes(state.view)) win.contentView.removeChildView(state.view);
   }
   return { open: state.open, width: state.width, provider: state.provider };
+});
+
+ipcMain.handle("ai-sidebar-obscured", (event, obscured) => {
+  const win = BrowserWindow.fromWebContents(event.sender);
+  const state = win && aiSidebars.get(win.id);
+  if (!win || !state) return false;
+  state.obscured = Boolean(obscured);
+  if (state.obscured) {
+    if (state.view && win.contentView.children.includes(state.view)) win.contentView.removeChildView(state.view);
+  } else if (state.open) {
+    openAiSidebar(win, state);
+  }
+  return state.obscured;
 });
 
 ipcMain.handle("ai-sidebar-provider", (event, provider) => {
@@ -665,8 +725,9 @@ ipcMain.handle("ai-sidebar-provider", (event, provider) => {
   const state = win && aiSidebars.get(win.id);
   if (!win || !state || !AI_PROVIDERS[provider]) return null;
   state.provider = provider;
-  openAiSidebar(win, state);
-  return { open: true, width: state.width, provider };
+  state.open = true;
+  if (!state.obscured) openAiSidebar(win, state);
+  return { open: state.open, width: state.width, provider };
 });
 
 ipcMain.handle("ai-sidebar-width", (event, width) => {
@@ -761,7 +822,7 @@ ipcMain.handle("begin-authorization", async (_event, id) => {
     if (!profile) return { ok: false, message: "Save this account profile first." };
     const response = await fetchWithTimeout(`${OAUTH_SERVICE_URL}/v2/oauth/start`, {
       method: "POST",
-      headers: { "User-Agent": "Qu/0.8.3", "Cache-Control": "no-cache" }
+      headers: { "User-Agent": "Qu/0.8.4", "Cache-Control": "no-cache" }
     });
     const values = await response.json();
     if (!response.ok || !values.authorizeUrl || !values.sessionId || !values.sessionKey) {
@@ -786,7 +847,7 @@ ipcMain.handle("complete-authorization", async (_event, id) => {
     }
     const response = await fetchWithTimeout(
       `${OAUTH_SERVICE_URL}/v1/oauth/session/${pending.sessionId}`,
-      { headers: { Authorization: `Bearer ${pending.sessionKey}`, "User-Agent": "Qu/0.8.3" } }
+      { headers: { Authorization: `Bearer ${pending.sessionKey}`, "User-Agent": "Qu/0.8.4" } }
     );
     const values = await response.json();
     if (response.ok && values.status === "pending") return { ok: true, pending: true };
@@ -899,11 +960,12 @@ ipcMain.handle("publish-posts", async (_event, id, posts) => {
         prepared.schedule = automaticSlots[automaticSlotIndex].toISOString();
         automaticSlotIndex += 1;
       }
-      const response = await publishPost(profile, prepared);
+      const published = await publishPost(profile, prepared);
       results.push({
         id: post.id,
         ok: true,
-        tumblrId: response?.response?.id || response?.response?.id_string || null
+        tumblrId: published.response?.response?.id || published.response?.response?.id_string || null,
+        labelsConfirmed: published.labelsConfirmed
       });
     } catch (error) {
       results.push({ id: post.id, ok: false, message: error.message });

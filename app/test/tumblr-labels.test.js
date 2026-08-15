@@ -1,7 +1,11 @@
 // SPDX-License-Identifier: MPL-2.0
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { normalizeContentLabels, tumblrCommunityLabelPayload } = require("../tumblr-labels");
+const {
+  normalizeContentLabels,
+  tumblrCommunityLabelPayload,
+  tumblrPostHasContentLabels
+} = require("../tumblr-labels");
 
 test("specific Tumblr labels automatically include Mature", () => {
   assert.deepEqual(normalizeContentLabels(["sexual-themes"]), ["mature", "sexual-themes"]);
@@ -25,4 +29,16 @@ test("specific labels use Tumblr's native category identifiers", () => {
 
 test("For Everyone omits Tumblr's mature-label fields", () => {
   assert.deepEqual(tumblrCommunityLabelPayload([]), {});
+});
+
+test("confirms Tumblr's nested community label response", () => {
+  assert.equal(tumblrPostHasContentLabels({
+    community_labels: { has_community_label: true, categories: ["sexual_themes"] }
+  }, ["mature", "sexual-themes"]), true);
+});
+
+test("detects when Tumblr silently drops a requested label", () => {
+  assert.equal(tumblrPostHasContentLabels({
+    community_labels: { has_community_label: false, categories: [] }
+  }, ["mature", "violence"]), false);
 });
