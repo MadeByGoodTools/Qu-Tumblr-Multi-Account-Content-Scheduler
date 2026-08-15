@@ -37,7 +37,7 @@ Qu opens Tumblr in the browser you choose. After you approve access, the callbac
 
 Registered callback URL:
 
-`https://nullgurll.github.io/qu/oauth-callback.html`
+`https://nullgurll.github.io/Qu/oauth-callback.html`
 
 ## Repository layout
 
