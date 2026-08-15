@@ -13,6 +13,7 @@ contextBridge.exposeInMainWorld("queueStudio", {
     ipcRenderer.invoke("launch-auth-browser", browserName, url),
   beginAuthorization: (id) => ipcRenderer.invoke("begin-authorization", id),
   completeAuthorization: (id, result) => ipcRenderer.invoke("complete-authorization", id, result),
+  completePastedCallback: (url) => ipcRenderer.invoke("complete-pasted-callback", url),
   verifyConnection: (id) => ipcRenderer.invoke("verify-connection", id),
   queueStatus: (id) => ipcRenderer.invoke("queue-status", id),
   calendarPosts: (id) => ipcRenderer.invoke("calendar-posts", id),

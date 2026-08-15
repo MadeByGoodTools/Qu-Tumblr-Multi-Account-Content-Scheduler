@@ -199,7 +199,13 @@
           <button type="button" class="ghost" id="open-authorization-again">Open again</button>
           <button type="button" class="ghost" id="copy-authorization-link">Copy link</button>
         </div>
-        <input id="authorization-result" type="hidden">
+        <div class="callback-fallback">
+          <label for="authorization-result">Tumblr opened a 404 page?</label>
+          <div>
+            <input id="authorization-result" placeholder="Paste the complete callback URL here">
+            <button type="button" class="ghost" id="complete-pasted-callback">Complete pasted callback</button>
+          </div>
+        </div>
         <button type="button" class="primary finish-authorization" id="finish-authorization">Check connection now</button>
       </section>
       <small class="security-note">The desktop app encrypts your secret using your computer’s protected credential storage. Tumblr authorization is the next connection step; never share these credentials in screenshots.</small>

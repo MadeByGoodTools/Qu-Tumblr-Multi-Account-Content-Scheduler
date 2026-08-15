@@ -5,7 +5,7 @@ const path = require("path");
 const crypto = require("crypto");
 const { spawn } = require("child_process");
 const { tumblrCommunityLabelPayload, tumblrPostHasContentLabels } = require("./tumblr-labels");
-const { isTumblrAuthorizationUrl } = require("./tumblr-auth");
+const { isTumblrAuthorizationUrl, extractTumblrCallbackParameters } = require("./tumblr-auth");
 const authorizationSessions = new Map();
 const OAUTH_SERVICE_URL = "https://qu-tumblr-auth.nullgurl.workers.dev";
 const aiSidebars = new Map();
@@ -136,7 +136,7 @@ async function refreshOAuth2Profile(profile) {
   if (!profile.refreshToken) throw new Error("Reconnect this Tumblr account to renew access.");
   const response = await fetchWithTimeout(`${OAUTH_SERVICE_URL}/v2/oauth/refresh`, {
     method: "POST",
-    headers: { "content-type": "application/json", "User-Agent": "Qu/0.8.5" },
+    headers: { "content-type": "application/json", "User-Agent": "Qu/0.8.6" },
     body: JSON.stringify({ refreshToken: decrypt(profile.refreshToken) })
   });
   const values = await response.json();
@@ -161,7 +161,7 @@ async function tumblrRequest(profile, method, url, options = {}) {
       method,
       headers: {
         Authorization: `Bearer ${decrypt(profile.accessToken)}`,
-        "User-Agent": "Qu/0.8.5",
+        "User-Agent": "Qu/0.8.6",
         ...(options.headers || {})
       },
       body: options.body
@@ -189,7 +189,7 @@ async function tumblrRequest(profile, method, url, options = {}) {
     method,
     headers: {
       Authorization: authorization,
-      "User-Agent": "Qu/0.8.5",
+      "User-Agent": "Qu/0.8.6",
       ...(options.headers || {})
     },
     body: options.body
@@ -822,7 +822,7 @@ ipcMain.handle("begin-authorization", async (_event, id) => {
     if (!profile) return { ok: false, message: "Save this account profile first." };
     const response = await fetchWithTimeout(`${OAUTH_SERVICE_URL}/v2/oauth/start`, {
       method: "POST",
-      headers: { "User-Agent": "Qu/0.8.5", "Cache-Control": "no-cache" }
+      headers: { "User-Agent": "Qu/0.8.6", "Cache-Control": "no-cache" }
     });
     const values = await response.json();
     if (!response.ok || !values.authorizeUrl || !values.sessionId || !values.sessionKey) {
@@ -847,7 +847,7 @@ ipcMain.handle("complete-authorization", async (_event, id) => {
     }
     const response = await fetchWithTimeout(
       `${OAUTH_SERVICE_URL}/v1/oauth/session/${pending.sessionId}`,
-      { headers: { Authorization: `Bearer ${pending.sessionKey}`, "User-Agent": "Qu/0.8.5" } }
+      { headers: { Authorization: `Bearer ${pending.sessionKey}`, "User-Agent": "Qu/0.8.6" } }
     );
     const values = await response.json();
     if (response.ok && values.status === "pending") return { ok: true, pending: true };
@@ -871,6 +871,27 @@ ipcMain.handle("complete-authorization", async (_event, id) => {
     profile.verifiedBlog = verified;
     writeConnections(settings);
     return { ok: true, verified };
+  } catch (error) {
+    return { ok: false, message: error.message };
+  }
+});
+
+ipcMain.handle("complete-pasted-callback", async (_event, callbackUrl) => {
+  try {
+    const values = extractTumblrCallbackParameters(callbackUrl);
+    if (!values) throw new Error("Paste the complete Tumblr callback URL containing oauth_token and oauth_verifier.");
+    const endpoint = new URL(`${OAUTH_SERVICE_URL}/v1/oauth/callback`);
+    endpoint.searchParams.set("oauth_token", values.oauthToken);
+    endpoint.searchParams.set("oauth_verifier", values.oauthVerifier);
+    const response = await fetchWithTimeout(endpoint.toString(), {
+      headers: { "User-Agent": "Qu/0.8.6", "Cache-Control": "no-cache" }
+    });
+    if (!response.ok) {
+      const body = await response.text();
+      const message = body.match(/<p>([^<]+)<\/p>/i)?.[1] || `Authorization service returned ${response.status}.`;
+      throw new Error(message);
+    }
+    return { ok: true };
   } catch (error) {
     return { ok: false, message: error.message };
   }

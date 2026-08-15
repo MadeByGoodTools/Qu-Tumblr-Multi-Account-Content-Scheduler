@@ -10,4 +10,17 @@ function isTumblrAuthorizationUrl(value) {
   }
 }
 
-module.exports = { isTumblrAuthorizationUrl };
+function extractTumblrCallbackParameters(value) {
+  try {
+    const url = new URL(value);
+    const allowedHost = url.hostname.endsWith(".tumblr.com") || url.hostname === "nullgurll.github.io";
+    const oauthToken = url.searchParams.get("oauth_token");
+    const oauthVerifier = url.searchParams.get("oauth_verifier");
+    if (url.protocol !== "https:" || !allowedHost || !oauthToken || !oauthVerifier) return null;
+    return { oauthToken, oauthVerifier };
+  } catch {
+    return null;
+  }
+}
+
+module.exports = { isTumblrAuthorizationUrl, extractTumblrCallbackParameters };
