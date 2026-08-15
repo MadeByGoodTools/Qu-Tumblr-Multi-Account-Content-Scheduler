@@ -23,6 +23,7 @@ contextBridge.exposeInMainWorld("queueStudio", {
   selectAiProvider: (provider) => ipcRenderer.invoke("ai-sidebar-provider", provider),
   setAiSidebarWidth: (width) => ipcRenderer.invoke("ai-sidebar-width", width),
   setAiSidebarBounds: (bounds) => ipcRenderer.invoke("ai-sidebar-bounds", bounds),
+  setAiSidebarObscured: (obscured) => ipcRenderer.invoke("ai-sidebar-obscured", obscured),
   reloadAiSidebar: () => ipcRenderer.invoke("ai-sidebar-reload"),
   openAiProviderExternal: () => ipcRenderer.invoke("ai-sidebar-open-external")
 });

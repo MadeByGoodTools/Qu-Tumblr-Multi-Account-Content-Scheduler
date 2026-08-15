@@ -2,14 +2,14 @@
 
 Qu is a visual desktop publishing workspace for preparing, organizing, scheduling, and posting multiple Tumblr posts efficiently.
 
-**Current version: 0.8.3**
+**Current version: 0.8.4**
 
 | Platform | Download |
 | --- | --- |
-| Windows 64-bit | [Qu 0.8.3 installer](https://github.com/NullGurll/Qu/releases/download/v0.8.3/Qu-Setup-0.8.3-x64.exe) |
-| macOS Intel and Apple Silicon | [Qu 0.8.3 universal installer](https://github.com/NullGurll/Qu/releases/download/v0.8.3/Qu-Setup-0.8.3-universal.dmg) |
+| Windows 64-bit | [Qu 0.8.4 installer](https://github.com/NullGurll/Qu/releases/download/v0.8.4/Qu-Setup-0.8.4-x64.exe) |
+| macOS Intel and Apple Silicon | [Qu 0.8.4 universal installer](https://github.com/NullGurll/Qu/releases/download/v0.8.4/Qu-Setup-0.8.4-universal.dmg) |
 
-[Release notes and checksums](https://github.com/NullGurll/Qu/releases/tag/v0.8.3)
+[Release notes and checksums](https://github.com/NullGurll/Qu/releases/tag/v0.8.4)
 
 ![Qu visual posting workspace](docs/images/qu-workspace.png)
 
@@ -25,13 +25,12 @@ Qu is a visual desktop publishing workspace for preparing, organizing, schedulin
 - Connect accounts through automatic Tumblr OAuth 2 authorization
 - Preserve Tumblr's Mature, Drug & Alcohol Addiction, Violence, and Sexual Themes labels when posting
 
-## What changed in 0.8.3
+## What changed in 0.8.4
 
-- Content-label changes are saved immediately for existing posts.
-- The open editor is synchronized before Qu assembles a posting batch, preventing a previously saved unlabeled copy from being sent.
-- Selecting Drug & Alcohol Addiction, Violence, or Sexual Themes automatically enables Mature.
-- Tumblr receives its current native community-label fields and category identifiers.
-- Regression tests now cover changing labels after saving and posting directly from the open editor.
+- Restored the **Connect with Tumblr** button for Tumblr's current OAuth 2 authorization URL.
+- Account and scheduling dialogs now appear above the embedded AI assistant.
+- Qu verifies requested content labels after Tumblr creates a post and makes one repair attempt if Tumblr omits them.
+- Posted items now display a clear warning when Tumblr still does not confirm their requested labels.
 
 ## Account connection
 
