@@ -1,6 +1,8 @@
 const REQUEST_TOKEN_URL = "https://www.tumblr.com/oauth/request_token";
-const AUTHORIZE_URL = "https://www.tumblr.com/oauth/authorize";
-const ACCESS_TOKEN_URL = "https://www.tumblr.com/oauth/access_token";
+const OAUTH1_AUTHORIZE_URL = "https://www.tumblr.com/oauth/authorize";
+const OAUTH1_ACCESS_TOKEN_URL = "https://www.tumblr.com/oauth/access_token";
+const OAUTH2_AUTHORIZE_URL = "https://www.tumblr.com/oauth2/authorize";
+const OAUTH2_TOKEN_URL = "https://api.tumblr.com/v2/oauth2/token";
 const REGISTERED_CALLBACK_URL = "https://nullgurll.github.io/Qu/oauth-callback.html";
 const SESSION_TTL_SECONDS = 15 * 60;
 
@@ -109,7 +111,7 @@ async function tumblrTokenRequest({ url, env, token, tokenSecret, extra, method 
   return values;
 }
 
-async function startAuthorization(request, env) {
+async function startOAuth1Authorization(request, env) {
   requireConfiguration(env);
   const sessionId = randomToken(24);
   const sessionKey = randomToken(32);
@@ -124,7 +126,7 @@ async function startAuthorization(request, env) {
     requestTokenSecret: requestToken.oauth_token_secret,
     createdAt: Date.now()
   };
-  const authorizeUrl = new URL(AUTHORIZE_URL);
+  const authorizeUrl = new URL(OAUTH1_AUTHORIZE_URL);
   authorizeUrl.searchParams.set("oauth_token", requestToken.oauth_token);
   await Promise.all([
     env.QU_OAUTH_SESSIONS.put(`session:${sessionId}`, JSON.stringify(session), { expirationTtl: SESSION_TTL_SECONDS }),
@@ -136,6 +138,26 @@ async function startAuthorization(request, env) {
     sessionKey,
     expiresIn: SESSION_TTL_SECONDS
   }, 201);
+}
+
+async function startAuthorization(request, env) {
+  requireConfiguration(env);
+  const sessionId = randomToken(24);
+  const sessionKey = randomToken(32);
+  const state = randomToken(32);
+  await Promise.all([
+    env.QU_OAUTH_SESSIONS.put(`session:${sessionId}`, JSON.stringify({
+      status: "pending", sessionKey, state, authMode: "oauth2", createdAt: Date.now()
+    }), { expirationTtl: SESSION_TTL_SECONDS }),
+    env.QU_OAUTH_SESSIONS.put(`state:${state}`, sessionId, { expirationTtl: SESSION_TTL_SECONDS })
+  ]);
+  const authorizeUrl = new URL(OAUTH2_AUTHORIZE_URL);
+  authorizeUrl.searchParams.set("client_id", String(env.TUMBLR_CONSUMER_KEY).trim());
+  authorizeUrl.searchParams.set("response_type", "code");
+  authorizeUrl.searchParams.set("scope", "basic write offline_access");
+  authorizeUrl.searchParams.set("state", state);
+  authorizeUrl.searchParams.set("redirect_uri", REGISTERED_CALLBACK_URL);
+  return json({ authorizeUrl: authorizeUrl.toString(), sessionId, sessionKey, expiresIn: SESSION_TTL_SECONDS }, 201);
 }
 
 function callbackPage(success, message) {
@@ -152,6 +174,9 @@ function callbackPage(success, message) {
 async function completeCallback(request, env) {
   requireConfiguration(env);
   const url = new URL(request.url);
+  const code = url.searchParams.get("code");
+  const state = url.searchParams.get("state");
+  if (code && state) return completeOAuth2Callback(code, state, env);
   const oauthToken = url.searchParams.get("oauth_token");
   const oauthVerifier = url.searchParams.get("oauth_verifier");
   const returnedError = url.searchParams.get("error");
@@ -165,7 +190,7 @@ async function completeCallback(request, env) {
   }
   try {
     const values = await tumblrTokenRequest({
-      url: ACCESS_TOKEN_URL,
+      url: OAUTH1_ACCESS_TOKEN_URL,
       env,
       token: session.requestToken,
       tokenSecret: session.requestTokenSecret,
@@ -190,6 +215,50 @@ async function completeCallback(request, env) {
   }
 }
 
+async function completeOAuth2Callback(code, state, env) {
+  const sessionId = await env.QU_OAUTH_SESSIONS.get(`state:${state}`);
+  if (!sessionId) return callbackPage(false, "This authorization attempt expired. Please start again in Qu.");
+  const session = await env.QU_OAUTH_SESSIONS.get(`session:${sessionId}`, "json");
+  if (!session || !timingSafeEqual(session.state, state)) {
+    return callbackPage(false, "This authorization attempt is invalid or expired.");
+  }
+  try {
+    const body = new URLSearchParams({
+      grant_type: "authorization_code",
+      code,
+      client_id: String(env.TUMBLR_CONSUMER_KEY).trim(),
+      client_secret: String(env.TUMBLR_CONSUMER_SECRET).trim(),
+      redirect_uri: REGISTERED_CALLBACK_URL
+    });
+    const response = await fetch(OAUTH2_TOKEN_URL, {
+      method: "POST",
+      headers: { "content-type": "application/x-www-form-urlencoded", "user-agent": "Qu OAuth Service/2.1" },
+      body
+    });
+    const values = await response.json();
+    if (!response.ok || !values.access_token) {
+      throw new Error(values.error_description || values.error || `Tumblr returned HTTP ${response.status}`);
+    }
+    await env.QU_OAUTH_SESSIONS.put(`session:${sessionId}`, JSON.stringify({
+      status: "complete",
+      sessionKey: session.sessionKey,
+      accessToken: values.access_token,
+      accessTokenSecret: "",
+      refreshToken: values.refresh_token || "",
+      expiresIn: values.expires_in || 0,
+      authMode: "oauth2",
+      completedAt: Date.now()
+    }), { expirationTtl: 5 * 60 });
+    await env.QU_OAUTH_SESSIONS.delete(`state:${state}`);
+    return callbackPage(true, "Authorization is complete. Qu will finish connecting this account automatically.");
+  } catch (error) {
+    await env.QU_OAUTH_SESSIONS.put(`session:${sessionId}`, JSON.stringify({
+      status: "failed", sessionKey: session.sessionKey, message: error.message
+    }), { expirationTtl: 5 * 60 });
+    return callbackPage(false, error.message);
+  }
+}
+
 async function refreshAuthorization(request, env) {
   requireConfiguration(env);
   const payload = await request.json().catch(() => ({}));
@@ -202,7 +271,7 @@ async function refreshAuthorization(request, env) {
     client_id: String(env.TUMBLR_CONSUMER_KEY).trim(),
     client_secret: String(env.TUMBLR_CONSUMER_SECRET).trim()
   });
-  const response = await fetch(ACCESS_TOKEN_URL, {
+  const response = await fetch(OAUTH2_TOKEN_URL, {
     method: "POST",
     headers: { "content-type": "application/x-www-form-urlencoded", "user-agent": "Qu OAuth Service/2.0" },
     body
@@ -258,7 +327,7 @@ export default {
           ok: true,
           service: "Qu Tumblr authorization",
           configured: Boolean(env.QU_OAUTH_SESSIONS && consumerKey && consumerSecret),
-          oauthVersion: "1.0a"
+          oauthVersion: "2.0"
         });
       }
       if (request.method === "POST" && ["/v1/oauth/start", "/v2/oauth/start"].includes(url.pathname)) {

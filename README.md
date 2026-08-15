@@ -2,14 +2,14 @@
 
 Qu is a visual desktop publishing workspace for preparing, organizing, scheduling, and posting multiple Tumblr posts efficiently.
 
-**Current version: 0.8.5**
+**Current version: 0.8.6**
 
 | Platform | Download |
 | --- | --- |
-| Windows 64-bit | [Qu 0.8.5 installer](https://github.com/NullGurll/Qu/releases/download/v0.8.5/Qu-Setup-0.8.5-x64.exe) |
-| macOS Intel and Apple Silicon | [Qu 0.8.5 universal installer](https://github.com/NullGurll/Qu/releases/download/v0.8.5/Qu-Setup-0.8.5-universal.dmg) |
+| Windows 64-bit | [Qu 0.8.6 installer](https://github.com/NullGurll/Qu/releases/download/v0.8.6/Qu-Setup-0.8.6-x64.exe) |
+| macOS Intel and Apple Silicon | [Qu 0.8.6 universal installer](https://github.com/NullGurll/Qu/releases/download/v0.8.6/Qu-Setup-0.8.6-universal.dmg) |
 
-[Release notes and checksums](https://github.com/NullGurll/Qu/releases/tag/v0.8.5)
+[Release notes and checksums](https://github.com/NullGurll/Qu/releases/tag/v0.8.6)
 
 ![Qu visual posting workspace](docs/images/qu-workspace.png)
 
@@ -25,11 +25,11 @@ Qu is a visual desktop publishing workspace for preparing, organizing, schedulin
 - Connect accounts through automatic Tumblr OAuth 2 authorization
 - Preserve Tumblr's Mature, Drug & Alcohol Addiction, Violence, and Sexual Themes labels when posting
 
-## What changed in 0.8.5
+## What changed in 0.8.6
 
-- Replaced Tumblr's unavailable OAuth 2 authorization page with Tumblr's working OAuth 1 authorization flow.
-- Account authorization remains automatic: approve Qu in Tumblr, then return to the app.
-- Retains the dialog layering and post-label verification fixes introduced in 0.8.4.
+- Adds an in-app fallback for Tumblr applications that redirect to a 404 blog callback.
+- Paste the complete callback URL into Qu and finish authorization without leaving the account dialog.
+- Makes repeated authorization status checks safe while the temporary session remains active.
 
 ## Account connection
 
