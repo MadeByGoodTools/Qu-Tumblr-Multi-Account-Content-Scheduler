@@ -88,12 +88,12 @@
     <script>
       const source = new URLSearchParams(window.location.search);
       const destination = new URL("https://qu-tumblr-auth.nullgurl.workers.dev/v1/oauth/callback");
-      for (const name of ["code", "state", "error", "error_description"]) {
+      for (const name of ["oauth_token", "oauth_verifier", "error", "error_description"]) {
         const value = source.get(name);
         if (value) destination.searchParams.set(name, value);
       }
       if (!destination.searchParams.has("error") &&
-          (!destination.searchParams.has("code") || !destination.searchParams.has("state"))) {
+          (!destination.searchParams.has("oauth_token") || !destination.searchParams.has("oauth_verifier"))) {
         document.getElementById("message").textContent =
           "Tumblr did not return a complete authorization response. Return to Qu and try again.";
       } else {

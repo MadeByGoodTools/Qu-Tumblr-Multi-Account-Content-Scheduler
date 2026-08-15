@@ -136,7 +136,7 @@ async function refreshOAuth2Profile(profile) {
   if (!profile.refreshToken) throw new Error("Reconnect this Tumblr account to renew access.");
   const response = await fetchWithTimeout(`${OAUTH_SERVICE_URL}/v2/oauth/refresh`, {
     method: "POST",
-    headers: { "content-type": "application/json", "User-Agent": "Qu/0.8.4" },
+    headers: { "content-type": "application/json", "User-Agent": "Qu/0.8.5" },
     body: JSON.stringify({ refreshToken: decrypt(profile.refreshToken) })
   });
   const values = await response.json();
@@ -161,7 +161,7 @@ async function tumblrRequest(profile, method, url, options = {}) {
       method,
       headers: {
         Authorization: `Bearer ${decrypt(profile.accessToken)}`,
-        "User-Agent": "Qu/0.8.4",
+        "User-Agent": "Qu/0.8.5",
         ...(options.headers || {})
       },
       body: options.body
@@ -189,7 +189,7 @@ async function tumblrRequest(profile, method, url, options = {}) {
     method,
     headers: {
       Authorization: authorization,
-      "User-Agent": "Qu/0.8.4",
+      "User-Agent": "Qu/0.8.5",
       ...(options.headers || {})
     },
     body: options.body
@@ -822,7 +822,7 @@ ipcMain.handle("begin-authorization", async (_event, id) => {
     if (!profile) return { ok: false, message: "Save this account profile first." };
     const response = await fetchWithTimeout(`${OAUTH_SERVICE_URL}/v2/oauth/start`, {
       method: "POST",
-      headers: { "User-Agent": "Qu/0.8.4", "Cache-Control": "no-cache" }
+      headers: { "User-Agent": "Qu/0.8.5", "Cache-Control": "no-cache" }
     });
     const values = await response.json();
     if (!response.ok || !values.authorizeUrl || !values.sessionId || !values.sessionKey) {
@@ -847,7 +847,7 @@ ipcMain.handle("complete-authorization", async (_event, id) => {
     }
     const response = await fetchWithTimeout(
       `${OAUTH_SERVICE_URL}/v1/oauth/session/${pending.sessionId}`,
-      { headers: { Authorization: `Bearer ${pending.sessionKey}`, "User-Agent": "Qu/0.8.4" } }
+      { headers: { Authorization: `Bearer ${pending.sessionKey}`, "User-Agent": "Qu/0.8.5" } }
     );
     const values = await response.json();
     if (response.ok && values.status === "pending") return { ok: true, pending: true };
@@ -858,10 +858,12 @@ ipcMain.handle("complete-authorization", async (_event, id) => {
     const profile = settings.profiles.find((item) => item.id === id);
     if (!profile) throw new Error("Account profile not found.");
     profile.accessToken = encrypt(values.accessToken);
-    profile.accessTokenSecret = "";
+    profile.accessTokenSecret = encrypt(values.accessTokenSecret || "");
     profile.refreshToken = encrypt(values.refreshToken || "");
-    profile.tokenExpiresAt = Date.now() + Math.max(0, Number(values.expiresIn || 0) * 1000);
-    profile.authMode = "oauth2";
+    profile.tokenExpiresAt = values.expiresIn
+      ? Date.now() + Math.max(0, Number(values.expiresIn) * 1000)
+      : 0;
+    profile.authMode = values.authMode || (values.accessTokenSecret ? "oauth1" : "oauth2");
     profile.verifiedBlog = null;
     writeConnections(settings);
     authorizationSessions.delete(id);

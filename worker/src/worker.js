@@ -1,5 +1,6 @@
-const AUTHORIZE_URL = "https://www.tumblr.com/oauth2/authorize";
-const ACCESS_TOKEN_URL = "https://api.tumblr.com/v2/oauth2/token";
+const REQUEST_TOKEN_URL = "https://www.tumblr.com/oauth/request_token";
+const AUTHORIZE_URL = "https://www.tumblr.com/oauth/authorize";
+const ACCESS_TOKEN_URL = "https://www.tumblr.com/oauth/access_token";
 const REGISTERED_CALLBACK_URL = "https://nullgurll.github.io/qu/oauth-callback.html";
 const SESSION_TTL_SECONDS = 15 * 60;
 
@@ -112,22 +113,22 @@ async function startAuthorization(request, env) {
   requireConfiguration(env);
   const sessionId = randomToken(24);
   const sessionKey = randomToken(32);
-  const state = randomToken(32);
+  const requestToken = await tumblrTokenRequest({
+    url: REQUEST_TOKEN_URL,
+    env
+  });
   const session = {
     status: "pending",
     sessionKey,
-    state,
+    requestToken: requestToken.oauth_token,
+    requestTokenSecret: requestToken.oauth_token_secret,
     createdAt: Date.now()
   };
   const authorizeUrl = new URL(AUTHORIZE_URL);
-  authorizeUrl.searchParams.set("client_id", String(env.TUMBLR_CONSUMER_KEY).trim());
-  authorizeUrl.searchParams.set("response_type", "code");
-  authorizeUrl.searchParams.set("scope", "basic write offline_access");
-  authorizeUrl.searchParams.set("state", state);
-  authorizeUrl.searchParams.set("redirect_uri", REGISTERED_CALLBACK_URL);
+  authorizeUrl.searchParams.set("oauth_token", requestToken.oauth_token);
   await Promise.all([
     env.QU_OAUTH_SESSIONS.put(`session:${sessionId}`, JSON.stringify(session), { expirationTtl: SESSION_TTL_SECONDS }),
-    env.QU_OAUTH_SESSIONS.put(`state:${state}`, sessionId, { expirationTtl: SESSION_TTL_SECONDS })
+    env.QU_OAUTH_SESSIONS.put(`token:${requestToken.oauth_token}`, sessionId, { expirationTtl: SESSION_TTL_SECONDS })
   ]);
   return json({
     authorizeUrl: authorizeUrl.toString(),
@@ -151,46 +152,35 @@ function callbackPage(success, message) {
 async function completeCallback(request, env) {
   requireConfiguration(env);
   const url = new URL(request.url);
-  const code = url.searchParams.get("code");
-  const state = url.searchParams.get("state");
+  const oauthToken = url.searchParams.get("oauth_token");
+  const oauthVerifier = url.searchParams.get("oauth_verifier");
   const returnedError = url.searchParams.get("error");
   if (returnedError) return callbackPage(false, url.searchParams.get("error_description") || returnedError);
-  if (!code || !state) return callbackPage(false, "Tumblr did not return a complete authorization response.");
-  const sessionId = await env.QU_OAUTH_SESSIONS.get(`state:${state}`);
+  if (!oauthToken || !oauthVerifier) return callbackPage(false, "Tumblr did not return a complete authorization response.");
+  const sessionId = await env.QU_OAUTH_SESSIONS.get(`token:${oauthToken}`);
   if (!sessionId) return callbackPage(false, "This authorization attempt expired. Please start again in Qu.");
   const session = await env.QU_OAUTH_SESSIONS.get(`session:${sessionId}`, "json");
-  if (!session || !timingSafeEqual(session.state, state)) return callbackPage(false, "This authorization attempt is invalid or expired.");
+  if (!session || !timingSafeEqual(session.requestToken, oauthToken)) {
+    return callbackPage(false, "This authorization attempt is invalid or expired.");
+  }
   try {
-    const body = new URLSearchParams({
-      grant_type: "authorization_code",
-      code,
-      client_id: String(env.TUMBLR_CONSUMER_KEY).trim(),
-      client_secret: String(env.TUMBLR_CONSUMER_SECRET).trim(),
-      redirect_uri: REGISTERED_CALLBACK_URL
+    const values = await tumblrTokenRequest({
+      url: ACCESS_TOKEN_URL,
+      env,
+      token: session.requestToken,
+      tokenSecret: session.requestTokenSecret,
+      extra: { oauth_verifier: oauthVerifier },
+      method: "GET"
     });
-    const response = await fetch(ACCESS_TOKEN_URL, {
-      method: "POST",
-      headers: {
-        "content-type": "application/x-www-form-urlencoded",
-        "user-agent": "Qu OAuth Service/2.0"
-      },
-      body
-    });
-    const values = await response.json();
-    if (!response.ok || !values.access_token) {
-      throw new Error(values.error_description || values.error || `Tumblr returned HTTP ${response.status}`);
-    }
     await env.QU_OAUTH_SESSIONS.put(`session:${sessionId}`, JSON.stringify({
       status: "complete",
       sessionKey: session.sessionKey,
-      accessToken: values.access_token,
-      refreshToken: values.refresh_token || "",
-      expiresIn: values.expires_in || 0,
-      tokenType: values.token_type || "bearer",
-      scope: values.scope || "",
+      accessToken: values.oauth_token,
+      accessTokenSecret: values.oauth_token_secret,
+      authMode: "oauth1",
       completedAt: Date.now()
     }), { expirationTtl: 5 * 60 });
-    await env.QU_OAUTH_SESSIONS.delete(`state:${state}`);
+    await env.QU_OAUTH_SESSIONS.delete(`token:${oauthToken}`);
     return callbackPage(true, "Authorization is complete. Qu will finish connecting this account automatically.");
   } catch (error) {
     await env.QU_OAUTH_SESSIONS.put(`session:${sessionId}`, JSON.stringify({
@@ -248,6 +238,8 @@ async function pollSession(request, env, sessionId) {
     return json({
       status: "complete",
       accessToken: session.accessToken,
+      accessTokenSecret: session.accessTokenSecret || "",
+      authMode: session.authMode || "oauth1",
       refreshToken: session.refreshToken,
       expiresIn: session.expiresIn,
       tokenType: session.tokenType,
@@ -268,7 +260,7 @@ export default {
           ok: true,
           service: "Qu Tumblr authorization",
           configured: Boolean(env.QU_OAUTH_SESSIONS && consumerKey && consumerSecret),
-          oauthVersion: "2.0"
+          oauthVersion: "1.0a"
         });
       }
       if (request.method === "POST" && ["/v1/oauth/start", "/v2/oauth/start"].includes(url.pathname)) {

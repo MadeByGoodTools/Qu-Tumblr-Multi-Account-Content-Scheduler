@@ -2,14 +2,14 @@
 
 Qu is a visual desktop publishing workspace for preparing, organizing, scheduling, and posting multiple Tumblr posts efficiently.
 
-**Current version: 0.8.4**
+**Current version: 0.8.5**
 
 | Platform | Download |
 | --- | --- |
-| Windows 64-bit | [Qu 0.8.4 installer](https://github.com/NullGurll/Qu/releases/download/v0.8.4/Qu-Setup-0.8.4-x64.exe) |
-| macOS Intel and Apple Silicon | [Qu 0.8.4 universal installer](https://github.com/NullGurll/Qu/releases/download/v0.8.4/Qu-Setup-0.8.4-universal.dmg) |
+| Windows 64-bit | [Qu 0.8.5 installer](https://github.com/NullGurll/Qu/releases/download/v0.8.5/Qu-Setup-0.8.5-x64.exe) |
+| macOS Intel and Apple Silicon | [Qu 0.8.5 universal installer](https://github.com/NullGurll/Qu/releases/download/v0.8.5/Qu-Setup-0.8.5-universal.dmg) |
 
-[Release notes and checksums](https://github.com/NullGurll/Qu/releases/tag/v0.8.4)
+[Release notes and checksums](https://github.com/NullGurll/Qu/releases/tag/v0.8.5)
 
 ![Qu visual posting workspace](docs/images/qu-workspace.png)
 
@@ -25,12 +25,11 @@ Qu is a visual desktop publishing workspace for preparing, organizing, schedulin
 - Connect accounts through automatic Tumblr OAuth 2 authorization
 - Preserve Tumblr's Mature, Drug & Alcohol Addiction, Violence, and Sexual Themes labels when posting
 
-## What changed in 0.8.4
+## What changed in 0.8.5
 
-- Restored the **Connect with Tumblr** button for Tumblr's current OAuth 2 authorization URL.
-- Account and scheduling dialogs now appear above the embedded AI assistant.
-- Qu verifies requested content labels after Tumblr creates a post and makes one repair attempt if Tumblr omits them.
-- Posted items now display a clear warning when Tumblr still does not confirm their requested labels.
+- Replaced Tumblr's unavailable OAuth 2 authorization page with Tumblr's working OAuth 1 authorization flow.
+- Account authorization remains automatic: approve Qu in Tumblr, then return to the app.
+- Retains the dialog layering and post-label verification fixes introduced in 0.8.4.
 
 ## Account connection
 
