@@ -1,7 +1,7 @@
 const REQUEST_TOKEN_URL = "https://www.tumblr.com/oauth/request_token";
 const AUTHORIZE_URL = "https://www.tumblr.com/oauth/authorize";
 const ACCESS_TOKEN_URL = "https://www.tumblr.com/oauth/access_token";
-const REGISTERED_CALLBACK_URL = "https://nullgurll.github.io/qu/oauth-callback.html";
+const REGISTERED_CALLBACK_URL = "https://nullgurll.github.io/Qu/oauth-callback.html";
 const SESSION_TTL_SECONDS = 15 * 60;
 
 const encoder = new TextEncoder();
@@ -230,11 +230,9 @@ async function pollSession(request, env, sessionId) {
   }
   if (session.status === "pending") return json({ status: "pending" });
   if (session.status === "failed") {
-    await env.QU_OAUTH_SESSIONS.delete(`session:${sessionId}`);
     return json({ status: "failed", message: session.message }, 400);
   }
   if (session.status === "complete") {
-    await env.QU_OAUTH_SESSIONS.delete(`session:${sessionId}`);
     return json({
       status: "complete",
       accessToken: session.accessToken,
