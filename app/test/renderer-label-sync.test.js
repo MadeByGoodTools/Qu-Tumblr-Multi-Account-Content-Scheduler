@@ -5,9 +5,11 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const renderer = fs.readFileSync(path.join(__dirname, "..", "renderer.js"), "utf8");
+const index = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8");
 
-test("changing a content label immediately synchronizes an existing saved post", () => {
-  assert.match(renderer, /addEventListener\("change",\(\)=>\{syncMatureContentLabel\(input\);syncActiveEditor\(\)\}\)/);
+test("Qu no longer presents unsupported Tumblr content-label controls", () => {
+  assert.doesNotMatch(index, /name="content-label"/);
+  assert.doesNotMatch(renderer, /contentLabel|MatureContentLabel|labelsConfirmed/);
 });
 
 test("queueing synchronizes the open editor before selecting ready posts", () => {
