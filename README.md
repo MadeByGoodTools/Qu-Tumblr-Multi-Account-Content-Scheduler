@@ -1,4 +1,4 @@
-# Qu
+# Qu — Multi-Account Content Scheduler
 
 Qu is a visual desktop publishing workspace for preparing, organizing, scheduling, and posting multiple Tumblr posts efficiently.
 
