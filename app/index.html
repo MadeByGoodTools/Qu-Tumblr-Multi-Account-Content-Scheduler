@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Qu</title>
   <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="content-labels.css">
   <link rel="stylesheet" href="account-manager.css">
 </head>
 <body>
@@ -83,17 +82,6 @@
           </div>
 
           <label class="field"><span>Tags</span><input id="tags" placeholder="#art #photography #behind the scenes"></label>
-
-          <fieldset class="content-labels">
-            <legend>Content labels</legend>
-            <p id="content-label-help">Leave all unchecked for <strong>For Everyone</strong>. Choosing any specific warning automatically enables <strong>Mature</strong>.</p>
-            <div class="content-label-grid" aria-describedby="content-label-help">
-              <label><input type="checkbox" name="content-label" value="mature"><span><b>Mature</b><small>General mature content</small></span></label>
-              <label><input type="checkbox" name="content-label" value="drug-and-alcohol-addiction"><span><b>Drug and Alcohol Addiction</b><small>Substance-use themes</small></span></label>
-              <label><input type="checkbox" name="content-label" value="violence"><span><b>Violence</b><small>Violent or graphic themes</small></span></label>
-              <label><input type="checkbox" name="content-label" value="sexual-themes"><span><b>Sexual Themes</b><small>Sexual or suggestive themes</small></span></label>
-            </div>
-          </fieldset>
 
           <div class="two-columns">
             <label class="field"><span>Publish mode</span><select id="post-state"><option value="queue">Tumblr native queue</option><option value="qu-schedule">Qu daily schedule</option><option value="scheduled">Choose an exact time</option><option value="draft">Save as Tumblr draft</option><option value="published">Publish now</option></select></label>

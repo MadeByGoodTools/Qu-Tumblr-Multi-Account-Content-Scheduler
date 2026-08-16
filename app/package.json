@@ -1,6 +1,6 @@
 {
   "name": "tumblr-queue-studio",
-  "version": "0.8.6",
+  "version": "0.8.7",
   "description": "Qu — a visual desktop queue manager for Tumblr.",
   "author": "NullGurll",
   "main": "main.js",
@@ -23,11 +23,9 @@
     "files": [
       "main.js",
       "tumblr-auth.js",
-      "tumblr-labels.js",
       "preload.js",
       "index.html",
       "styles.css",
-      "content-labels.css",
       "account-manager.css",
       "renderer.js",
       "assets/**/*"

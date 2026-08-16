@@ -6,7 +6,7 @@ Qu is an Electron desktop workspace for preparing, organizing, and publishing Tu
 
 - Create, edit, duplicate, search, filter, and bulk-remove posts
 - Add multiple images by selecting files or dragging them into the editor
-- Set captions, separate tags, Tumblr content labels, and publishing modes
+- Set captions, separate tags, and publishing modes
 - Use Tumblr's native queue, Qu's posting times, a custom schedule, or immediate publishing
 - Connect and switch between as many as four Tumblr accounts
 - Synchronize Tumblr queue entries with Qu's calendar

@@ -2,34 +2,33 @@
 
 Qu is a visual desktop publishing workspace for preparing, organizing, scheduling, and posting multiple Tumblr posts efficiently.
 
-**Current version: 0.8.6**
+**Current version: 0.8.7**
 
 | Platform | Download |
 | --- | --- |
-| Windows 64-bit | [Qu 0.8.6 installer](https://github.com/NullGurll/Qu/releases/download/v0.8.6/Qu-Setup-0.8.6-x64.exe) |
-| macOS Intel and Apple Silicon | [Qu 0.8.6 universal installer](https://github.com/NullGurll/Qu/releases/download/v0.8.6/Qu-Setup-0.8.6-universal.dmg) |
+| Windows 64-bit | [Qu 0.8.7 installer](https://github.com/NullGurll/Qu/releases/download/v0.8.7/Qu-Setup-0.8.7-x64.exe) |
+| macOS Intel and Apple Silicon | [Qu 0.8.7 universal installer](https://github.com/NullGurll/Qu/releases/download/v0.8.7/Qu-Setup-0.8.7-universal.dmg) |
 
-[Release notes and checksums](https://github.com/NullGurll/Qu/releases/tag/v0.8.6)
+[Release notes and checksums](https://github.com/NullGurll/Qu/releases/tag/v0.8.7)
 
 ![Qu visual posting workspace](docs/images/qu-workspace.png)
 
 ## Highlights
 
 - Prepare text and image posts from one organized workspace
-- Add captions, images, separately parsed tags, Tumblr content labels, and publishing modes
+- Add captions, images, separately parsed tags, and publishing modes
 - Publish immediately, schedule a specific time, use Qu's posting times, or add to Tumblr's native queue
 - Manage as many as four Tumblr accounts and switch between their separate workspaces
 - Synchronize the active account's Tumblr queue and calendar
 - Create templates, duplicate posts, apply bulk tags, and remove one or many drafts
 - Open ChatGPT, Claude, Gemini, or DeepSeek beside the editor
 - Connect accounts through automatic Tumblr OAuth 2 authorization
-- Preserve Tumblr's Mature, Drug & Alcohol Addiction, Violence, and Sexual Themes labels when posting
 
-## What changed in 0.8.6
+## What changed in 0.8.7
 
-- Adds an in-app fallback for Tumblr applications that redirect to a 404 blog callback.
-- Paste the complete callback URL into Qu and finish authorization without leaving the account dialog.
-- Makes repeated authorization status checks safe while the temporary session remains active.
+- Removes the mature-content controls that Tumblr's public posting API does not reliably preserve.
+- Leaves content classification to Tumblr's own automated moderation system.
+- Simplifies the post editor and refreshes the repository screenshot to match the current interface.
 
 ## Account connection
 
