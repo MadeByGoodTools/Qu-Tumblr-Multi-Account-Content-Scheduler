@@ -2,14 +2,14 @@
 
 Qu is a visual desktop publishing workspace for preparing, organizing, scheduling, and posting multiple Tumblr posts efficiently.
 
-**Current version: 0.8.7**
+**Current version: 0.8.8**
 
 | Platform | Download |
 | --- | --- |
-| Windows 64-bit | [Qu 0.8.7 installer](https://github.com/NullGurll/Qu/releases/download/v0.8.7/Qu-Setup-0.8.7-x64.exe) |
-| macOS Intel and Apple Silicon | [Qu 0.8.7 universal installer](https://github.com/NullGurll/Qu/releases/download/v0.8.7/Qu-Setup-0.8.7-universal.dmg) |
+| Windows 64-bit | [Qu 0.8.8 installer](https://github.com/NullGurll/Qu-Tumblr-Multi-Account-Content-Scheduler/releases/download/v0.8.8/Qu-Setup-0.8.8-x64.exe) |
+| macOS Intel and Apple Silicon | [Qu 0.8.8 universal installer](https://github.com/NullGurll/Qu-Tumblr-Multi-Account-Content-Scheduler/releases/download/v0.8.8/Qu-Setup-0.8.8-universal.dmg) |
 
-[Release notes and checksums](https://github.com/NullGurll/Qu/releases/tag/v0.8.7)
+[Release notes and checksums](https://github.com/NullGurll/Qu-Tumblr-Multi-Account-Content-Scheduler/releases/tag/v0.8.8)
 
 ![Qu visual posting workspace](docs/images/qu-workspace.png)
 
@@ -24,11 +24,11 @@ Qu is a visual desktop publishing workspace for preparing, organizing, schedulin
 - Open ChatGPT, Claude, Gemini, or DeepSeek beside the editor
 - Connect accounts through automatic Tumblr OAuth 2 authorization
 
-## What changed in 0.8.7
+## What changed in 0.8.8
 
-- Removes the mature-content controls that Tumblr's public posting API does not reliably preserve.
-- Leaves content classification to Tumblr's own automated moderation system.
-- Simplifies the post editor and refreshes the repository screenshot to match the current interface.
+- Updates Tumblr authorization to the callback page created by the renamed GitHub repository.
+- Keeps the Tumblr application, Cloudflare authorization service, documentation, and installers on one callback address.
+- Prevents account authorization from ending on the retired `/Qu/` GitHub Pages URL.
 
 ## Account connection
 
@@ -36,7 +36,7 @@ Qu opens Tumblr in the browser you choose. After you approve access, the callbac
 
 Registered callback URL:
 
-`https://nullgurll.github.io/Qu/oauth-callback.html`
+`https://nullgurll.github.io/Qu-Tumblr-Multi-Account-Content-Scheduler/oauth-callback.html`
 
 ## Repository layout
 

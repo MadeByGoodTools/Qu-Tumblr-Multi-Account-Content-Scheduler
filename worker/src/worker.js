@@ -3,7 +3,7 @@ const OAUTH1_AUTHORIZE_URL = "https://www.tumblr.com/oauth/authorize";
 const OAUTH1_ACCESS_TOKEN_URL = "https://www.tumblr.com/oauth/access_token";
 const OAUTH2_AUTHORIZE_URL = "https://www.tumblr.com/oauth2/authorize";
 const OAUTH2_TOKEN_URL = "https://api.tumblr.com/v2/oauth2/token";
-const REGISTERED_CALLBACK_URL = "https://nullgurll.github.io/Qu/oauth-callback.html";
+const REGISTERED_CALLBACK_URL = "https://nullgurll.github.io/Qu-Tumblr-Multi-Account-Content-Scheduler/oauth-callback.html";
 const SESSION_TTL_SECONDS = 15 * 60;
 
 const encoder = new TextEncoder();

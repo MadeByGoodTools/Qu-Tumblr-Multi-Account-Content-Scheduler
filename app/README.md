@@ -20,7 +20,7 @@ Create an account profile with a display name and Tumblr blog identifier. Select
 
 The shared callback registered for the Qu Tumblr application is:
 
-`https://nullgurll.github.io/qu/oauth-callback.html`
+`https://nullgurll.github.io/Qu-Tumblr-Multi-Account-Content-Scheduler/oauth-callback.html`
 
 Users do not need the application's consumer key or consumer secret. The fields under **Legacy/manual Tumblr credentials** are only for existing manual configurations.
 
