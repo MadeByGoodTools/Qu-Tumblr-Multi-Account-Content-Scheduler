@@ -23,6 +23,18 @@ test("extracts Tumblr callback credentials from the redirected blog URL", () => 
   ), { oauthToken: "one", oauthVerifier: "two" });
 });
 
+test("accepts the current Good Tools GitHub Pages callback", () => {
+  assert.deepEqual(extractTumblrCallbackParameters(
+    "https://madebygoodtools.github.io/Qu-Tumblr-Multi-Account-Content-Scheduler/oauth-callback.html?oauth_token=one&oauth_verifier=two"
+  ), { oauthToken: "one", oauthVerifier: "two" });
+});
+
+test("rejects the retired GitHub Pages callback host", () => {
+  assert.equal(extractTumblrCallbackParameters(
+    "https://nullgurll.github.io/Qu-Tumblr-Multi-Account-Content-Scheduler/oauth-callback.html?oauth_token=one&oauth_verifier=two"
+  ), null);
+});
+
 test("rejects callback credentials from an unrelated host", () => {
   assert.equal(extractTumblrCallbackParameters(
     "https://example.com/oauth-callback?oauth_token=one&oauth_verifier=two"

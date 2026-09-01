@@ -13,7 +13,7 @@ function isTumblrAuthorizationUrl(value) {
 function extractTumblrCallbackParameters(value) {
   try {
     const url = new URL(value);
-    const allowedHost = url.hostname.endsWith(".tumblr.com") || url.hostname === "nullgurll.github.io";
+    const allowedHost = url.hostname.endsWith(".tumblr.com") || url.hostname === "madebygoodtools.github.io";
     const oauthToken = url.searchParams.get("oauth_token");
     const oauthVerifier = url.searchParams.get("oauth_verifier");
     if (url.protocol !== "https:" || !allowedHost || !oauthToken || !oauthVerifier) return null;

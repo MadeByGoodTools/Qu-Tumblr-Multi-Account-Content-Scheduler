@@ -6,10 +6,10 @@ Qu is a visual desktop publishing workspace for preparing, organizing, schedulin
 
 | Platform | Download |
 | --- | --- |
-| Windows 64-bit | [Qu 0.8.8 installer](https://github.com/NullGurll/Qu-Tumblr-Multi-Account-Content-Scheduler/releases/download/v0.8.8/Qu-Setup-0.8.8-x64.exe) |
-| macOS Intel and Apple Silicon | [Qu 0.8.8 universal installer](https://github.com/NullGurll/Qu-Tumblr-Multi-Account-Content-Scheduler/releases/download/v0.8.8/Qu-Setup-0.8.8-universal.dmg) |
+| Windows 64-bit | [Qu 0.8.8 installer](https://github.com/MadeByGoodTools/Qu-Tumblr-Multi-Account-Content-Scheduler/releases/download/v0.8.8/Qu-Setup-0.8.8-x64.exe) |
+| macOS Intel and Apple Silicon | [Qu 0.8.8 universal installer](https://github.com/MadeByGoodTools/Qu-Tumblr-Multi-Account-Content-Scheduler/releases/download/v0.8.8/Qu-Setup-0.8.8-universal.dmg) |
 
-[Release notes and checksums](https://github.com/NullGurll/Qu-Tumblr-Multi-Account-Content-Scheduler/releases/tag/v0.8.8)
+[Release notes and checksums](https://github.com/MadeByGoodTools/Qu-Tumblr-Multi-Account-Content-Scheduler/releases/tag/v0.8.8)
 
 ![Qu visual posting workspace](docs/images/qu-workspace.png)
 
@@ -36,7 +36,7 @@ Qu opens Tumblr in the browser you choose. After you approve access, the callbac
 
 Registered callback URL:
 
-`https://nullgurll.github.io/Qu-Tumblr-Multi-Account-Content-Scheduler/oauth-callback.html`
+`https://madebygoodtools.github.io/Qu-Tumblr-Multi-Account-Content-Scheduler/oauth-callback.html`
 
 ## Repository layout
 
