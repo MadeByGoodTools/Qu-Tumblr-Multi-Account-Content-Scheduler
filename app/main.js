@@ -5,6 +5,7 @@ const path = require("path");
 const crypto = require("crypto");
 const { spawn } = require("child_process");
 const { isTumblrAuthorizationUrl, extractTumblrCallbackParameters } = require("./tumblr-auth");
+const { startAutoUpdates } = require("./updater");
 const authorizationSessions = new Map();
 const OAUTH_SERVICE_URL = "https://qu-tumblr-auth.nullgurl.workers.dev";
 const aiSidebars = new Map();
@@ -615,6 +616,7 @@ function createWindow() {
 app.whenReady().then(() => {
   session.fromPartition(AI_PARTITION).setPermissionRequestHandler((_webContents, _permission, callback) => callback(false));
   createWindow();
+  startAutoUpdates(() => BrowserWindow.getAllWindows()[0]);
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });

@@ -17,11 +17,15 @@
     "electron": "^37.2.3",
     "electron-builder": "^26.0.12"
   },
+  "dependencies": {
+    "electron-updater": "^6.6.2"
+  },
   "build": {
     "appId": "app.qu.tumblr",
     "productName": "Qu",
     "files": [
       "main.js",
+      "updater.js",
       "tumblr-auth.js",
       "preload.js",
       "index.html",
@@ -30,6 +34,7 @@
       "renderer.js",
       "assets/**/*"
     ],
+    "publish": [{ "provider": "github", "owner": "MadeByGoodTools", "repo": "Qu-Updates" }],
     "win": {
       "target": [
         {
@@ -58,6 +63,12 @@
       "target": [
         {
           "target": "dmg",
+          "arch": [
+            "universal"
+          ]
+        },
+        {
+          "target": "zip",
           "arch": [
             "universal"
           ]
