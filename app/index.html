@@ -74,7 +74,21 @@
           </div>
 
           <label class="field"><span>Post title <em>optional</em></span><input id="post-title" placeholder="Give this draft a working title"></label>
-          <label class="field"><span>Caption</span><textarea id="caption" rows="7" placeholder="Write something worth stopping for…"></textarea></label>
+          <label class="field caption-field"><span>Caption</span><textarea id="caption" rows="7" placeholder="Write something worth stopping for…"></textarea></label>
+          <section class="caption-format-panel" aria-label="Caption formatting">
+            <div class="caption-format-row">
+              <label><span>Tumblr font</span><select id="caption-style"><option value="">Regular</option><option value="heading1">Large heading</option><option value="heading2">Medium heading</option><option value="quirky">Handwritten</option><option value="quote">Quote</option><option value="chat">Chat monospace</option></select></label>
+              <label><span>Text color</span><input id="caption-color" type="color" value="#72a7ff"></label>
+              <button type="button" class="ghost compact" id="apply-caption-color">Apply color</button>
+            </div>
+            <div class="caption-format-row link-format-row">
+              <label><span>Hyperlink</span><input id="caption-link" type="url" placeholder="https://example.com"></label>
+              <button type="button" class="ghost compact" id="apply-caption-link">Link selected text</button>
+              <button type="button" class="ghost compact" id="clear-caption-formatting">Clear selected formatting</button>
+            </div>
+            <small id="caption-format-status">Select words in the caption, then apply a color or hyperlink.</small>
+            <div class="caption-preview" id="caption-preview" aria-label="Formatted caption preview"><span>Your formatted caption preview appears here.</span></div>
+          </section>
 
           <div class="media-zone" id="media-zone">
             <div class="media-empty" id="media-empty"><span>↑</span><strong>Drop images here</strong><small>or click to choose JPG, PNG, GIF, or WebP</small></div>

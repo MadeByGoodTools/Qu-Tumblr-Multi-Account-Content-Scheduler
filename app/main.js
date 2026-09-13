@@ -5,6 +5,7 @@ const path = require("path");
 const crypto = require("crypto");
 const { spawn } = require("child_process");
 const { isTumblrAuthorizationUrl, extractTumblrCallbackParameters } = require("./tumblr-auth");
+const { normalizeCaptionSubtype, normalizeCaptionFormatting } = require("./tumblr-formatting");
 const authorizationSessions = new Map();
 const OAUTH_SERVICE_URL = "https://qu-tumblr-auth.nullgurl.workers.dev";
 const aiSidebars = new Map();
@@ -436,7 +437,14 @@ async function publishPost(profile, post) {
     });
     uploads.push({ identifier, decoded, name: safeUploadName(post.media[index].name, index, decoded.type) });
   }
-  if (post.caption) content.push({ type: "text", text: post.caption });
+  if (post.caption) {
+    const caption = { type: "text", text: post.caption };
+    const subtype = normalizeCaptionSubtype(post.captionSubtype);
+    const formatting = normalizeCaptionFormatting(post.caption, post.captionFormatting);
+    if (subtype) caption.subtype = subtype;
+    if (formatting.length) caption.formatting = formatting;
+    content.push(caption);
+  }
   if (!content.length) throw new Error("The post has no text or images.");
   const state = post.state === "scheduled" ? "queue" : post.state;
   const payload = {

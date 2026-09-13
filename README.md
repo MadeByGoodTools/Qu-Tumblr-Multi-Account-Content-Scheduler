@@ -16,7 +16,7 @@ Qu is a visual desktop publishing workspace for preparing, organizing, schedulin
 ## Highlights
 
 - Prepare text and image posts from one organized workspace
-- Add captions, images, separately parsed tags, and publishing modes
+- Add captions with Tumblr-native fonts, selected-text colors and hyperlinks, images, separately parsed tags, and publishing modes
 - Publish immediately, schedule a specific time, use Qu's posting times, or add to Tumblr's native queue
 - Manage as many as four Tumblr accounts and switch between their separate workspaces
 - Synchronize the active account's Tumblr queue and calendar

@@ -8,7 +8,7 @@
   "packageManager": "pnpm@11.16.0",
   "scripts": {
     "start": "electron .",
-    "test": "node --test",
+    "test": "node --test test/renderer-label-sync.test.js test/tumblr-auth.test.js test/tumblr-formatting.test.js",
     "dist:win": "electron-builder --win nsis --x64",
     "dist:win:portable": "electron-builder --win portable --x64",
     "dist:mac": "electron-builder --mac dmg --universal"
@@ -23,6 +23,7 @@
     "files": [
       "main.js",
       "tumblr-auth.js",
+      "tumblr-formatting.js",
       "preload.js",
       "index.html",
       "styles.css",
