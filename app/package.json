@@ -1,6 +1,6 @@
 {
   "name": "tumblr-queue-studio",
-  "version": "0.8.8",
+  "version": "0.8.9",
   "description": "Qu — a visual desktop queue manager for Tumblr.",
   "author": "NullGurll",
   "main": "main.js",

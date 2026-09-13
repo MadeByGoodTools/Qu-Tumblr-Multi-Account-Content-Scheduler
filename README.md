@@ -2,14 +2,14 @@
 
 Qu is a visual desktop publishing workspace for preparing, organizing, scheduling, and posting multiple Tumblr posts efficiently.
 
-**Current version: 0.8.8**
+**Current version: 0.8.9**
 
 | Platform | Download |
 | --- | --- |
-| Windows 64-bit | [Qu 0.8.8 installer](https://github.com/NullGurll/Qu-Tumblr-Multi-Account-Content-Scheduler/releases/download/v0.8.8/Qu-Setup-0.8.8-x64.exe) |
-| macOS Intel and Apple Silicon | [Qu 0.8.8 universal installer](https://github.com/NullGurll/Qu-Tumblr-Multi-Account-Content-Scheduler/releases/download/v0.8.8/Qu-Setup-0.8.8-universal.dmg) |
+| Windows 64-bit | [Qu 0.8.9 installer](https://github.com/MadeByGoodTools/Qu-Tumblr-Multi-Account-Content-Scheduler/releases/download/v0.8.9/Qu-Setup-0.8.9-x64.exe) |
+| macOS Intel and Apple Silicon | [Qu 0.8.9 universal installer](https://github.com/MadeByGoodTools/Qu-Tumblr-Multi-Account-Content-Scheduler/releases/download/v0.8.9/Qu-Setup-0.8.9-universal.dmg) |
 
-[Release notes and checksums](https://github.com/NullGurll/Qu-Tumblr-Multi-Account-Content-Scheduler/releases/tag/v0.8.8)
+[Release notes and checksums](https://github.com/MadeByGoodTools/Qu-Tumblr-Multi-Account-Content-Scheduler/releases/tag/v0.8.9)
 
 ![Qu visual posting workspace](docs/images/qu-workspace.png)
 
@@ -24,11 +24,11 @@ Qu is a visual desktop publishing workspace for preparing, organizing, schedulin
 - Open ChatGPT, Claude, Gemini, or DeepSeek beside the editor
 - Connect accounts through automatic Tumblr OAuth 2 authorization
 
-## What changed in 0.8.8
+## What changed in 0.8.9
 
-- Updates Tumblr authorization to the callback page created by the renamed GitHub repository.
-- Keeps the Tumblr application, Cloudflare authorization service, documentation, and installers on one callback address.
-- Prevents account authorization from ending on the retired `/Qu/` GitHub Pages URL.
+- Adds Tumblr-native caption styles: regular, large and medium headings, handwritten, quote, and chat.
+- Adds selected-text colors and safe inline hyperlinks that remain attached through drafts, templates, duplication, and publishing.
+- Adds a formatted caption preview and rejects unsafe non-web link schemes before a post is sent.
 
 ## Account connection
 
@@ -36,7 +36,7 @@ Qu opens Tumblr in the browser you choose. After you approve access, the callbac
 
 Registered callback URL:
 
-`https://nullgurll.github.io/Qu-Tumblr-Multi-Account-Content-Scheduler/oauth-callback.html`
+`https://madebygoodtools.github.io/Qu-Tumblr-Multi-Account-Content-Scheduler/oauth-callback.html`
 
 ## Repository layout
 

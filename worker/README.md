@@ -16,7 +16,7 @@ Never commit real Tumblr credentials, `.dev.vars`, or exported Cloudflare settin
 
 Register this exact callback URL in the Tumblr application:
 
-`https://nullgurll.github.io/Qu-Tumblr-Multi-Account-Content-Scheduler/oauth-callback.html`
+`https://madebygoodtools.github.io/Qu-Tumblr-Multi-Account-Content-Scheduler/oauth-callback.html`
 
 The GitHub Pages callback forwards Tumblr's authorization response to the Worker endpoint at `/v1/oauth/callback`.
 
