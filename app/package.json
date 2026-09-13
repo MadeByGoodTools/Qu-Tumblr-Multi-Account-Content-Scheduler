@@ -2,7 +2,7 @@
   "name": "tumblr-queue-studio",
   "version": "0.8.9",
   "description": "Qu — a visual desktop queue manager for Tumblr.",
-  "author": "NullGurll",
+  "author": "Good Tools",
   "main": "main.js",
   "license": "MPL-2.0",
   "packageManager": "pnpm@11.16.0",
@@ -17,11 +17,15 @@
     "electron": "^37.2.3",
     "electron-builder": "^26.0.12"
   },
+  "dependencies": {
+    "electron-updater": "^6.6.2"
+  },
   "build": {
     "appId": "app.qu.tumblr",
     "productName": "Qu",
     "files": [
       "main.js",
+      "updater.js",
       "tumblr-auth.js",
       "tumblr-formatting.js",
       "preload.js",
@@ -31,6 +35,7 @@
       "renderer.js",
       "assets/**/*"
     ],
+    "publish": [{ "provider": "github", "owner": "MadeByGoodTools", "repo": "Qu-Updates" }],
     "win": {
       "target": [
         {
@@ -59,6 +64,12 @@
       "target": [
         {
           "target": "dmg",
+          "arch": [
+            "universal"
+          ]
+        },
+        {
+          "target": "zip",
           "arch": [
             "universal"
           ]
